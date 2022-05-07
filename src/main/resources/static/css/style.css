@@ -1,0 +1,26 @@
+html, body {
+    /*padding: 0;*/
+    /*margin: 0;*/
+    font-family: 'Roboto Mono', Arial, serif;
+    font-size: 18px;
+}
+
+.input-container {
+    display: flex;
+}
+
+#sh-input {
+    margin-left: 10px;
+    width: 100%;
+    border: none;
+    font-size: 18px;
+    font-family: 'Roboto Mono', Arial, serif;
+}
+
+#output {
+    width: 100%;
+    border: none;
+    font-size: 18px;
+    font-family: 'Roboto Mono', Arial, serif;
+    padding: 0;
+}
