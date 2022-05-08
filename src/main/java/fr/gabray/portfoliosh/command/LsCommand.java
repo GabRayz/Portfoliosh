@@ -21,7 +21,7 @@ public class LsCommand implements Command {
     {
         Collection<FakeFile> files = env.getWorkingDirectory().getFiles();
         files.forEach(file -> {
-            String s = file.getName() + "\t";
+            String s = file.getName() + (file.getType() == FakeFile.Type.FOLDER ? "/" : "") + "\t";
             try
             {
                 outputStream.write(s.getBytes(StandardCharsets.UTF_8));
