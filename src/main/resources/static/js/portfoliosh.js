@@ -6,7 +6,10 @@ const stompClient = Stomp.over(socket);
 stompClient.connect({}, function (frame) {
     console.log('Connected!');
     stompClient.subscribe('/sock/receive', function (message) {
-        console.log(JSON.parse(message.body).input);
+        let response = JSON.parse(message.body).input;
+        console.log(response);
+        outputArea.value += '\n' + response;
+        outputArea.rows += 1;
     })
 })
 
