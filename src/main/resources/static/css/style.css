@@ -1,6 +1,8 @@
 html, body {
     font-family: 'Roboto Mono', Arial, serif;
     font-size: 18px;
+    color: greenyellow;
+    background-color: black;
 }
 
 .input-container {
@@ -13,6 +15,8 @@ html, body {
     border: none;
     font-size: 18px;
     font-family: 'Roboto Mono', Arial, serif;
+    background-color: black;
+    color: greenyellow;
 }
 
 #output {
@@ -21,4 +25,6 @@ html, body {
     font-size: 18px;
     font-family: 'Roboto Mono', Arial, serif;
     padding: 0;
+    background-color: black;
+    color: greenyellow;
 }
