@@ -51,6 +51,6 @@ document.querySelector('.input-container').onsubmit = function () {
     return false;
 }
 
-connect().then(() => sendInput("cat welcome.md && ls"))
+connect().then(() => sendInput("cat welcome.md"))
 
 outputArea.value = '';
