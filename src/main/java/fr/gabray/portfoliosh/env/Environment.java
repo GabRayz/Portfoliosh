@@ -1,10 +1,15 @@
 package fr.gabray.portfoliosh.env;
 
+import fr.gabray.portfoliosh.exception.EnvironmentInitException;
 import lombok.Getter;
 import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
+import java.io.File;
 import java.io.FileNotFoundException;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.util.Objects;
 
 public class Environment {
 
@@ -54,9 +59,34 @@ public class Environment {
     public static Environment defaultEnv()
     {
         Environment environment = new Environment();
-        environment.createFile(FakeFile.Type.FILE, environment.getRootFolder(), "foo");
-        environment.createFile(FakeFile.Type.FILE, environment.getRootFolder(), "bar");
-        environment.createFile(FakeFile.Type.FOLDER, environment.getRootFolder(), "dir");
+        URL fsUrl = environment.getClass().getClassLoader().getResource("fs");
+        if (fsUrl == null)
+            throw new IllegalStateException("Missing fs resource folder");
+        File file;
+        try
+        {
+            file = new File(fsUrl.toURI());
+        }
+        catch (URISyntaxException e)
+        {
+            throw new EnvironmentInitException(e);
+        }
+
+        addFilesToEnv(environment, file, environment.getRootFolder());
+
         return environment;
+    }
+
+    private static void addFilesToEnv(Environment environment, File file, FakeFile parent)
+    {
+        for (final File listFile : Objects.requireNonNull(file.listFiles()))
+        {
+            FakeFile.Type type = listFile.isDirectory()
+                                 ? FakeFile.Type.FOLDER
+                                 : FakeFile.Type.FILE;
+            FakeFile created = environment.createFile(type, parent, listFile.getName());
+            if (type == FakeFile.Type.FOLDER)
+                addFilesToEnv(environment, listFile, created);
+        }
     }
 }
