@@ -11,7 +11,8 @@ public final class CommandManager {
 
     private static final Map<String, Command> commands = Map.of(
             "ls", new LsCommand(),
-            "cd", new CdCommand()
+            "cd", new CdCommand(),
+            "pwd", new PwdCommand()
     );
 
     public static Optional<Command> get(String name)

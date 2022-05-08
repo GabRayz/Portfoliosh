@@ -51,4 +51,12 @@ public class FakeFile {
         files.put(file.name, file);
         return file;
     }
+
+    public String computePath()
+    {
+        if (parent == null)
+            return "/";
+        String path = parent.computePath();
+        return path + (path.endsWith("/") ? "" : "/") + name;
+    }
 }

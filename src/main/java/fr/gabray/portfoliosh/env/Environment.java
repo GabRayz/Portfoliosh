@@ -56,6 +56,7 @@ public class Environment {
         Environment environment = new Environment();
         environment.createFile(FakeFile.Type.FILE, environment.getRootFolder(), "foo");
         environment.createFile(FakeFile.Type.FILE, environment.getRootFolder(), "bar");
+        environment.createFile(FakeFile.Type.FOLDER, environment.getRootFolder(), "dir");
         return environment;
     }
 }
