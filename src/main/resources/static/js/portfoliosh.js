@@ -24,13 +24,12 @@ function connect() {
 function display(message) {
     outputArea.value += '\n' + message;
     outputArea.rows += (message.match(/\n/g) || []).length + 1;
+    window.scroll(0, document.body.scrollHeight);
 }
 
 async function sendInput(userInput) {
     display('portfoliosh$ ' + userInput);
     input.value = '';
-
-    window.scroll(0, window.innerHeight);
 
     if (!stompClient.connected) {
         console.log('Reconnecting...');
@@ -50,6 +49,6 @@ document.querySelector('.input-container').onsubmit = function () {
     return false;
 }
 
-connect().then(() => sendInput("ls"))
+connect().then(() => sendInput("cat welcome.md"))
 
 outputArea.value = '';
