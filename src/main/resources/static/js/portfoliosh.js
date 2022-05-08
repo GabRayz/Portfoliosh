@@ -8,8 +8,10 @@ stompClient.connect({}, function (frame) {
     stompClient.subscribe('/sock/receive', function (message) {
         let response = JSON.parse(message.body).input;
         console.log(response);
-        outputArea.value += '\n' + response;
-        outputArea.rows += 1;
+        if (response.length > 0) {
+            outputArea.value += '\n' + response;
+            outputArea.rows += (response.match(/\n/g) || []).length + 1;
+        }
     })
 })
 
