@@ -15,7 +15,7 @@ class LexerTest {
 
         Token token = lexer.pop();
 
-        assertEquals(TokenType.EOI, token.type());
+        assertEquals(TokenType.EOI, token.getType());
     }
 
     @Test
@@ -25,8 +25,8 @@ class LexerTest {
 
         Token token = lexer.pop();
 
-        assertEquals(TokenType.WORD, token.type());
-        assertEquals("foo", token.value());
+        assertEquals(TokenType.WORD, token.getType());
+        assertEquals("foo", token.getValue());
     }
 
     @Test
@@ -37,7 +37,7 @@ class LexerTest {
         lexer.pop();
         Token token = lexer.pop();
 
-        assertEquals(TokenType.EOI, token.type());
+        assertEquals(TokenType.EOI, token.getType());
     }
 
     @Test
@@ -46,19 +46,43 @@ class LexerTest {
         Lexer lexer = new Lexer("foo bar");
 
         Token token = lexer.pop();
-        assertEquals(TokenType.WORD, token.type());
+        assertEquals(TokenType.WORD, token.getType());
         token = lexer.pop();
-        assertEquals(TokenType.WORD, token.type());
+        assertEquals(TokenType.WORD, token.getType());
     }
 
     @Test
-    void ShouldReturn2WordsWhenPopIsCalledTwiceWith2WordsSeparatedByManyWhitespaces() throws IOException
+    void doubleOperatorTest() throws IOException
     {
-        Lexer lexer = new Lexer("foo     \t  \r   bar");
+        Lexer lexer = new Lexer(";;");
 
         Token token = lexer.pop();
-        assertEquals(TokenType.WORD, token.type());
+        assertEquals(TokenType.OPERATOR, token.getType());
+        assertEquals(Operator.DSEMI, ((OperatorToken) token).getOperator());
+    }
+
+    @Test
+    void simpleOperatorTest() throws IOException
+    {
+        Lexer lexer = new Lexer(";");
+
+        Token token = lexer.pop();
+        assertEquals(TokenType.OPERATOR, token.getType());
+        assertEquals(Operator.SEMI, ((OperatorToken) token).getOperator());
+    }
+
+    @Test
+    void operatorDelimiterTest() throws IOException
+    {
+        Lexer lexer = new Lexer("foo||bar");
+
+        Token token = lexer.pop();
+        assertEquals(TokenType.WORD, token.getType());
         token = lexer.pop();
-        assertEquals(TokenType.WORD, token.type());
+        assertEquals(TokenType.OPERATOR, token.getType());
+        assertEquals(Operator.OR_IF, ((OperatorToken) token).getOperator());
+        token = lexer.pop();
+        assertEquals(TokenType.WORD, token.getType());
+        assertEquals("bar", token.getValue());
     }
 }

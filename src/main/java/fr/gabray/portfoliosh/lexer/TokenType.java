@@ -5,5 +5,6 @@ public enum TokenType {
     NEWLINE,
     RESERVED_WORD,
     EOI,
+    OPERATOR,
 }
 

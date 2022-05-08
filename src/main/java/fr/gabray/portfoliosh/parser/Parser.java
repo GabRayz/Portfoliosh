@@ -56,13 +56,13 @@ public class Parser {
     public SimpleCommandAst parseSimpleCommand() throws IOException
     {
         Token token = lexer.pop();
-        if (token.type() != TokenType.WORD)
+        if (token.getType() != TokenType.WORD)
             return null;
 
         List<String> words = new ArrayList<>();
-        while (token.type() == TokenType.WORD)
+        while (token.getType() == TokenType.WORD)
         {
-            words.add(token.value());
+            words.add(token.getValue());
             token = lexer.pop();
         }
         return new SimpleCommandAst(words);
