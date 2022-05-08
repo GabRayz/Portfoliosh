@@ -4,7 +4,6 @@ import fr.gabray.portfoliosh.ast.CompleteCommandAst;
 import fr.gabray.portfoliosh.ast.SimpleCommandAst;
 import fr.gabray.portfoliosh.exception.ParsingException;
 import fr.gabray.portfoliosh.lexer.Lexer;
-import fr.gabray.portfoliosh.lexer.Token;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -31,11 +30,11 @@ class ParserTest {
 
         List<SimpleCommandAst> commands = ast.ast().commands();
         assertEquals(1, commands.size());
-        List<Token> words = commands.get(0).words();
+        List<String> words = commands.get(0).words();
         assertEquals(3, words.size());
-        assertEquals("ls", words.get(0).value());
-        assertEquals("-a", words.get(1).value());
-        assertEquals("./foo", words.get(2).value());
+        assertEquals("ls", words.get(0));
+        assertEquals("-a", words.get(1));
+        assertEquals("./foo", words.get(2));
     }
 
     @Test
