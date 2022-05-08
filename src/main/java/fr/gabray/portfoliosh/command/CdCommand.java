@@ -25,7 +25,10 @@ public class CdCommand implements Command {
             try
             {
                 FakeFile file = env.getFile(args[1]);
-                env.setWorkingDirectory(file);
+                if (file.getType() != FakeFile.Type.FOLDER)
+                    outputStream.write(("portfoliosh: cd: " + args[1] + ": Not a directory").getBytes(StandardCharsets.UTF_8));
+                else
+                    env.setWorkingDirectory(file);
             }
             catch (FileNotFoundException e)
             {
