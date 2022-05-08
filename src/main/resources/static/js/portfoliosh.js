@@ -22,6 +22,8 @@ function connect() {
 }
 
 function display(message) {
+    if (message.endsWith('\n'))
+        message = message.substring(0, message.length - 1);
     outputArea.value += '\n' + message;
     outputArea.rows += (message.match(/\n/g) || []).length + 1;
     window.scroll(0, document.body.scrollHeight);
@@ -49,6 +51,6 @@ document.querySelector('.input-container').onsubmit = function () {
     return false;
 }
 
-connect().then(() => sendInput("cat welcome.md"))
+connect().then(() => sendInput("cat welcome.md && ls"))
 
 outputArea.value = '';

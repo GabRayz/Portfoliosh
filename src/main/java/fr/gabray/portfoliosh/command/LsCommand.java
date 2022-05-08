@@ -37,6 +37,7 @@ public class LsCommand implements Command {
                     throw new CommandRuntimeException(e);
                 }
             });
+            outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
         }
         catch (FileNotFoundException e)
         {
