@@ -6,13 +6,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
-public record ListAst(List<AndOrAst> commands) implements Ast {
+public record PipelineAst(List<CommandAst> commands) implements Ast {
     @Override
     public int execute(final Environment env, final OutputStream outputStream) throws IOException
     {
-        int res = 0;
-        for (final Ast command : commands)
-            res = command.execute(env, outputStream);
-        return res;
+        for (final CommandAst command : commands)
+            command.execute(env, outputStream);
+        return 0;
     }
 }

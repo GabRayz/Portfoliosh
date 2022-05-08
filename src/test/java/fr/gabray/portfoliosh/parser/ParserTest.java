@@ -1,15 +1,15 @@
 package fr.gabray.portfoliosh.parser;
 
-import fr.gabray.portfoliosh.ast.CompleteCommandAst;
-import fr.gabray.portfoliosh.ast.SimpleCommandAst;
+import fr.gabray.portfoliosh.ast.*;
 import fr.gabray.portfoliosh.exception.ParsingException;
 import fr.gabray.portfoliosh.lexer.Lexer;
+import fr.gabray.portfoliosh.lexer.Operator;
 import org.junit.jupiter.api.Test;
 
+import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class ParserTest {
 
@@ -28,9 +28,11 @@ class ParserTest {
 
         CompleteCommandAst ast = parser.parse();
 
-        List<SimpleCommandAst> commands = ast.ast().commands();
+        List<AndOrAst> commands = ast.ast().commands();
         assertEquals(1, commands.size());
-        List<String> words = commands.get(0).words();
+        Ast left = commands.get(0).left();
+        assertInstanceOf(PipelineAst.class, left);
+        List<String> words = ((SimpleCommandAst) ((PipelineAst) left).commands().get(0).command()).words();
         assertEquals(3, words.size());
         assertEquals("ls", words.get(0));
         assertEquals("-a", words.get(1));
@@ -38,12 +40,39 @@ class ParserTest {
     }
 
     @Test
-    void skipLeadingLineFeedsTest() throws ParsingException
+    void andOrTest() throws ParsingException, IOException
     {
-        Parser parser = new Parser(new Lexer("\n\n\necho"));
+        Parser parser = new Parser(new Lexer("command a || command b"));
 
-        CompleteCommandAst ast = parser.parse();
+        AndOrAst andOrAst = parser.parseAndOrAst();
 
-        assertEquals(1, ast.ast().commands().size());
+        assertNotNull(andOrAst);
+        assertNotNull(andOrAst.right());
+        assertEquals(Operator.OR_IF, andOrAst.operator());
+    }
+
+    @Test
+    void commandTest() throws IOException
+    {
+        Parser parser = new Parser(new Lexer("ls -la test"));
+
+        CommandAst commandAst = parser.parseCommand();
+
+        assertNotNull(commandAst);
+        assertInstanceOf(SimpleCommandAst.class, commandAst.command());
+        assertEquals(3, ((SimpleCommandAst) commandAst.command()).words().size());
+    }
+
+    @Test
+    void simplePipelineTest() throws IOException
+    {
+        Parser parser = new Parser(new Lexer("ls -la test"));
+
+        PipelineAst pipelineAst = parser.parsePipeline();
+        assertNotNull(pipelineAst);
+
+        CommandAst commandAst = pipelineAst.commands().get(0);
+        assertInstanceOf(SimpleCommandAst.class, commandAst.command());
+        assertEquals(3, ((SimpleCommandAst) commandAst.command()).words().size());
     }
 }

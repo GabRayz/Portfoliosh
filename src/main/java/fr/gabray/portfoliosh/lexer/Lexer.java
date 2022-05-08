@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayDeque;
+import java.util.Deque;
 
 public class Lexer {
 
     private final PushBackInputStream inputStream;
+    private final Deque<Token> stack = new ArrayDeque<>();
 
     public Lexer(@NotNull final InputStream inputStream)
     {
@@ -25,6 +27,8 @@ public class Lexer {
     @NotNull
     public Token pop() throws IOException
     {
+        if (!stack.isEmpty())
+            return stack.pop();
         String word = getWord();
 
         if (word.isEmpty())
@@ -35,6 +39,20 @@ public class Lexer {
             return new OperatorToken(word, operator);
 
         return new Token(TokenType.WORD, word);
+    }
+
+    @NotNull
+    public Token peek() throws IOException
+    {
+        if (!stack.isEmpty())
+            return stack.peek();
+        return pushBack(pop());
+    }
+
+    public Token pushBack(Token token)
+    {
+        stack.push(token);
+        return token;
     }
 
     private boolean isSeparator(final char c)

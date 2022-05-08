@@ -4,15 +4,12 @@ import fr.gabray.portfoliosh.env.Environment;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.List;
 
-public record ListAst(List<AndOrAst> commands) implements Ast {
+public record CommandAst(Ast command) implements Ast {
+
     @Override
     public int execute(final Environment env, final OutputStream outputStream) throws IOException
     {
-        int res = 0;
-        for (final Ast command : commands)
-            res = command.execute(env, outputStream);
-        return res;
+        return command.execute(env, outputStream);
     }
 }
