@@ -2,12 +2,13 @@ package fr.gabray.portfoliosh.ast;
 
 import fr.gabray.portfoliosh.env.Environment;
 
+import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
 public record ListAst(List<SimpleCommandAst> commands) implements Ast {
     @Override
-    public int execute(final Environment env, final OutputStream outputStream)
+    public int execute(final Environment env, final OutputStream outputStream) throws IOException
     {
         int res = 0;
         for (final SimpleCommandAst command : commands)

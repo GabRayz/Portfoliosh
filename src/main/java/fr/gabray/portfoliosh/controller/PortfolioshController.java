@@ -2,7 +2,6 @@ package fr.gabray.portfoliosh.controller;
 
 import fr.gabray.portfoliosh.ast.Ast;
 import fr.gabray.portfoliosh.env.Environment;
-import fr.gabray.portfoliosh.exception.ParsingException;
 import fr.gabray.portfoliosh.lexer.Lexer;
 import fr.gabray.portfoliosh.model.SendInputModel;
 import fr.gabray.portfoliosh.parser.Parser;
@@ -44,9 +43,9 @@ public class PortfolioshController {
             ast.execute(Environment.defaultEnv(), outputStream);
             simpMessagingTemplate.convertAndSend("/sock/receive", new SendInputModel(outputStream.toString()));
         }
-        catch (ParsingException e)
+        catch (Exception e)
         {
-            logger.error("Error while parsing input", e);
+            logger.error("Error while executing input", e);
         }
     }
 }
