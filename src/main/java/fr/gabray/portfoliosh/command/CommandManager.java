@@ -13,7 +13,8 @@ public final class CommandManager {
             "ls", new LsCommand(),
             "cd", new CdCommand(),
             "pwd", new PwdCommand(),
-            "cat", new CatCommand()
+            "cat", new CatCommand(),
+            "echo", new EchoCommand()
     );
 
     public static Optional<Command> get(String name)
