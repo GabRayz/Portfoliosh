@@ -30,14 +30,21 @@ public class Environment {
 
     public FakeFile getFile(String path) throws FileNotFoundException
     {
+        return path.startsWith("/") ? getFile(rootFolder, path) : getFile(workingDirectory, path);
+    }
 
-        FakeFile file = rootFolder;
+    public FakeFile getFile(FakeFile base, String path) throws FileNotFoundException
+    {
+        FakeFile file = base;
         String[] paths = path.split("/");
         for (final String subpath : paths)
         {
-            if (subpath.isBlank())
+            if (subpath.isBlank() || subpath.equals("."))
                 continue;
-            file = file.getFile(subpath);
+            if (subpath.equals(".."))
+                file = file.getParent();
+            else
+                file = file.getFile(subpath);
             if (file == null)
                 throw new FileNotFoundException();
         }
