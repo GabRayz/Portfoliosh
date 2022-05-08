@@ -3,6 +3,8 @@ package fr.gabray.portfoliosh.env;
 import lombok.Getter;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,5 +60,15 @@ public class FakeFile {
             return "/";
         String path = parent.computePath();
         return path + (path.endsWith("/") ? "" : "/") + name;
+    }
+
+    public String read() throws IOException
+    {
+        if (type != Type.FILE)
+            throw new UnsupportedOperationException();
+        InputStream stream = this.getClass().getClassLoader().getResourceAsStream("fs" + computePath());
+        if (stream == null)
+            throw new IOException("File not found");
+        return new String(stream.readAllBytes());
     }
 }
