@@ -43,4 +43,12 @@ public class Environment {
         }
         return file;
     }
+
+    public static Environment defaultEnv()
+    {
+        Environment environment = new Environment();
+        environment.createFile(FakeFile.Type.FILE, environment.getRootFolder(), "foo");
+        environment.createFile(FakeFile.Type.FILE, environment.getRootFolder(), "bar");
+        return environment;
+    }
 }
