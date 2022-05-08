@@ -22,6 +22,7 @@ public class EchoCommand implements Command {
                 outputStream.write(" ".getBytes(StandardCharsets.UTF_8));
             outputStream.write(args[i].getBytes(StandardCharsets.UTF_8));
         }
+        outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
         return 0;
     }
 }

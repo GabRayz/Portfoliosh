@@ -17,6 +17,7 @@ public class PwdCommand implements Command {
     public int execute(final Environment env, final OutputStream outputStream, final String... args) throws IOException
     {
         outputStream.write(env.getWorkingDirectory().computePath().getBytes(StandardCharsets.UTF_8));
+        outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
         return 0;
     }
 }
