@@ -85,4 +85,44 @@ class LexerTest {
         assertEquals(TokenType.WORD, token.getType());
         assertEquals("bar", token.getValue());
     }
+
+    @Test
+    void simpleQuoteTest() throws IOException
+    {
+        Lexer lexer = new Lexer("'foo'");
+
+        Token token = lexer.pop();
+        assertEquals(TokenType.WORD, token.getType());
+        assertEquals("'foo'", token.getValue());
+    }
+
+    @Test
+    void middleQuoteTest() throws IOException
+    {
+        Lexer lexer = new Lexer("foo'bar'\"baz\"");
+
+        Token token = lexer.pop();
+        assertEquals(TokenType.WORD, token.getType());
+        assertEquals("foo'bar'\"baz\"", token.getValue());
+    }
+
+    @Test
+    void quotedSpacesTest() throws IOException
+    {
+        Lexer lexer = new Lexer("'foo   bar'");
+
+        Token token = lexer.pop();
+        assertEquals(TokenType.WORD, token.getType());
+        assertEquals("'foo   bar'", token.getValue());
+    }
+
+    @Test
+    void escapedSpaceTest() throws IOException
+    {
+        Lexer lexer = new Lexer("foo\\ bar");
+
+        Token token = lexer.pop();
+        assertEquals(TokenType.WORD, token.getType());
+        assertEquals("foo\\ bar", token.getValue());
+    }
 }

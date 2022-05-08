@@ -50,13 +50,27 @@ public class Lexer {
         {
             char read = inputStream.read();
             if (read == '\0')
-                return builder.toString();
+                return builder.toString(); // rule 1
             if (last != '\0' && Operator.isOp("" + last + read))
-                return builder.append(read).toString();
+                return builder.append(read).toString(); // rule 2
             else if (last != '\0' && Operator.isOp("" + last))
             {
                 inputStream.pushBack(read);
-                return builder.toString();
+                return builder.toString(); // rule 3
+            }
+            // rule 4
+            if (read == '\\')
+            {
+                char next = inputStream.read();
+                if (next != '\n')
+                    builder.append(read).append(next);
+                continue;
+            }
+            if (read == '\"' || read == '\'')
+            {
+                builder.append(read);
+                handleQuote(inputStream, builder, read);
+                continue;
             }
 
             if (last != '\0' && Operator.isOp(read + ""))
@@ -76,6 +90,21 @@ public class Lexer {
             builder.append(read);
             last = read;
         }
+    }
+
+    private void handleQuote(PushBackInputStream inputStream, StringBuilder builder, char quoteChar) throws IOException
+    {
+        char read = inputStream.read();
+        while (read != quoteChar && read != '\0')
+        {
+            builder.append(read);
+            if (read == '\\')
+                builder.append(inputStream.read());
+            read = inputStream.read();
+        }
+        if (read == '\0')
+            throw new IllegalStateException("Expected end of quote");
+        builder.append(read);
     }
 }
 
