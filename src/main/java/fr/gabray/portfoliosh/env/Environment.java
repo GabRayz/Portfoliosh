@@ -1,6 +1,7 @@
 package fr.gabray.portfoliosh.env;
 
 import lombok.Getter;
+import lombok.Setter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.FileNotFoundException;
@@ -9,10 +10,14 @@ public class Environment {
 
     @Getter
     private final FakeFile rootFolder;
+    @Getter
+    @Setter
+    private FakeFile workingDirectory;
 
     public Environment()
     {
         rootFolder = new FakeFile(null, FakeFile.Type.FOLDER, "");
+        workingDirectory = rootFolder;
     }
 
     public FakeFile createFile(@NotNull FakeFile.Type type, @NotNull FakeFile parent, @NotNull String name)
@@ -20,9 +25,7 @@ public class Environment {
         if (name.isBlank())
             throw new IllegalArgumentException("File name cannot be blank");
 
-        FakeFile created = new FakeFile(parent, type, name);
-        parent.getChildren().put(name, created);
-        return created;
+        return parent.addFile(new FakeFile(parent, type, name));
     }
 
     public FakeFile getFile(String path) throws FileNotFoundException
@@ -34,7 +37,7 @@ public class Environment {
         {
             if (subpath.isBlank())
                 continue;
-            file = file.getChildren().get(subpath);
+            file = file.getFile(subpath);
             if (file == null)
                 throw new FileNotFoundException();
         }

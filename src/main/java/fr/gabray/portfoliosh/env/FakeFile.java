@@ -1,7 +1,9 @@
 package fr.gabray.portfoliosh.env;
 
 import lombok.Getter;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -13,7 +15,7 @@ public class FakeFile {
     private final Type type;
     @Getter
     private final String name;
-    private final Map<String, FakeFile> children = new HashMap<>();
+    private final Map<String, FakeFile> files = new HashMap<>();
 
     public FakeFile(final FakeFile parent, final Type type, final String name)
     {
@@ -27,8 +29,26 @@ public class FakeFile {
         FILE,
     }
 
-    public Map<String, FakeFile> getChildren()
+    public Collection<FakeFile> getFiles()
     {
-        return children;
+        if (type != Type.FOLDER)
+            throw new UnsupportedOperationException();
+        return files.values();
+    }
+
+    @Nullable
+    public FakeFile getFile(String name)
+    {
+        if (type != Type.FOLDER)
+            throw new UnsupportedOperationException();
+        return files.get(name);
+    }
+
+    public FakeFile addFile(FakeFile file)
+    {
+        if (type != Type.FOLDER)
+            throw new UnsupportedOperationException();
+        files.put(file.name, file);
+        return file;
     }
 }

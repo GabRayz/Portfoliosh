@@ -59,10 +59,10 @@ public class Parser {
         if (token.type() != TokenType.WORD)
             return null;
 
-        List<Token> words = new ArrayList<>();
+        List<String> words = new ArrayList<>();
         while (token.type() == TokenType.WORD)
         {
-            words.add(token);
+            words.add(token.value());
             token = lexer.pop();
         }
         return new SimpleCommandAst(words);
