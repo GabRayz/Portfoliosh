@@ -7,7 +7,7 @@ import lombok.Getter;
 import java.util.*;
 
 @Getter
-public class FromBuilder implements StatementBuilder {
+public class FromBuilder implements StatementBuilder, Orderable {
     private final SelectBuilder select;
     private final String tableName;
 

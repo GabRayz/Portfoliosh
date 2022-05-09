@@ -6,5 +6,6 @@ public enum SqlReservedWord {
     WHERE,
     ORDER,
     BY,
+    DESC,
     LIMIT,
 }

@@ -4,12 +4,14 @@ import fr.gabray.portfoliosh.command.sql.Database;
 import fr.gabray.portfoliosh.command.sql.DbData;
 import fr.gabray.portfoliosh.command.sql.ResultSet;
 import fr.gabray.portfoliosh.exception.SqlException;
+import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+@Getter
 public class OrderByBuilder implements StatementBuilder {
     private final StatementBuilder parent;
     private final List<String> columns = new ArrayList<>();

@@ -4,6 +4,7 @@ import fr.gabray.portfoliosh.command.sql.Column;
 import fr.gabray.portfoliosh.command.sql.Database;
 import fr.gabray.portfoliosh.command.sql.Table;
 import fr.gabray.portfoliosh.command.sql.statement.FromBuilder;
+import fr.gabray.portfoliosh.command.sql.statement.OrderByBuilder;
 import fr.gabray.portfoliosh.command.sql.statement.StatementBuilder;
 import fr.gabray.portfoliosh.exception.ParsingException;
 import org.junit.jupiter.api.BeforeAll;
@@ -103,5 +104,43 @@ class SqlParserTest {
         assertInstanceOf(FromBuilder.class, builder);
         assertEquals("employees", ((FromBuilder) builder).getTableName());
         assertTrue(((FromBuilder) builder).getSelect().isAll());
+    }
+
+    @Test
+    void fromOrderByTest() throws ParsingException
+    {
+        SqlParser parser = new SqlParser("SELECT * FROM employees ORDER BY id");
+
+        StatementBuilder builder = parser.parse(database);
+
+        assertInstanceOf(OrderByBuilder.class, builder);
+        assertEquals(1, ((OrderByBuilder) builder).getColumns().size());
+        assertEquals("id", ((OrderByBuilder) builder).getColumns().get(0));
+    }
+
+    @Test
+    void fromOrderByDescTest() throws ParsingException
+    {
+        SqlParser parser = new SqlParser("SELECT * FROM employees ORDER BY id DESC");
+
+        StatementBuilder builder = parser.parse(database);
+
+        assertInstanceOf(OrderByBuilder.class, builder);
+        assertEquals(1, ((OrderByBuilder) builder).getColumns().size());
+        assertEquals("id", ((OrderByBuilder) builder).getColumns().get(0));
+        assertTrue(((OrderByBuilder) builder).isDesc());
+    }
+
+    @Test
+    void fromMultipleOrderByTest() throws ParsingException
+    {
+        SqlParser parser = new SqlParser("SELECT * FROM employees ORDER BY id, firstname");
+
+        StatementBuilder builder = parser.parse(database);
+
+        assertInstanceOf(OrderByBuilder.class, builder);
+        assertEquals(2, ((OrderByBuilder) builder).getColumns().size());
+        assertEquals("id", ((OrderByBuilder) builder).getColumns().get(0));
+        assertEquals("firstname", ((OrderByBuilder) builder).getColumns().get(1));
     }
 }
