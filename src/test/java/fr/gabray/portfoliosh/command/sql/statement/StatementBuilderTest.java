@@ -72,6 +72,22 @@ class StatementBuilderTest {
     }
 
     @Test
+    void selectAllTest()
+    {
+        StatementBuilder statement = new SelectBuilder()
+                .allFrom("employees");
+
+        ResultSet result = statement.execute(database);
+
+        assertEquals(4, result.columns().size());
+        assertEquals(4, result.data().size());
+        assertEquals("id", result.columns().get(0));
+        assertEquals("firstname", result.columns().get(1));
+        assertEquals("lastname", result.columns().get(2));
+        assertEquals("age", result.columns().get(3));
+    }
+
+    @Test
     void selectInvalidFrom()
     {
         StatementBuilder statement = new SelectBuilder()

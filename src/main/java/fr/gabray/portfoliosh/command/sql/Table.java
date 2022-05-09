@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -30,6 +31,11 @@ public final class Table {
     {
         this.name = name;
         this.columns = columns;
+    }
+
+    public List<String> getColumnNames()
+    {
+        return columns.keySet().stream().toList();
     }
 
     public void addColumn(Column column, boolean primaryKey)

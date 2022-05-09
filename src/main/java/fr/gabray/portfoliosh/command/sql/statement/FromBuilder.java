@@ -47,15 +47,21 @@ public class FromBuilder implements StatementBuilder {
         Collection<Row> rows = table.getRows().values();
         // copy wanted columns
         List<Map<String, DbData>> resultRows = rows.stream()
-                                                   .map(row -> selectOnRow(row, columns))
+                                                   .map(row -> selectOnRow(row, columns, select.isAll()))
                                                    .toList();
 
-        return new ResultSet(select.getColumns(), new ArrayList<>(resultRows));
+        return new ResultSet(select.isAll() ? table.getColumnNames() : select.getColumns(), new ArrayList<>(resultRows));
     }
 
-    private Map<String, DbData> selectOnRow(Row row, List<Column> columns)
+    private Map<String, DbData> selectOnRow(Row row, List<Column> columns, boolean all)
     {
         Map<String, DbData> map = new HashMap<>();
+        if (all)
+        {
+            for (final Map.Entry<Column, DbData> columnDbDataEntry : row.getData().entrySet())
+                map.put(columnDbDataEntry.getKey().name(), columnDbDataEntry.getValue());
+            return map;
+        }
         for (final Column column : columns)
             map.put(column.name(), row.get(column));
         return map;
