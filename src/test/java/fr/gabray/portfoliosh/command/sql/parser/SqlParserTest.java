@@ -3,10 +3,7 @@ package fr.gabray.portfoliosh.command.sql.parser;
 import fr.gabray.portfoliosh.command.sql.Column;
 import fr.gabray.portfoliosh.command.sql.Database;
 import fr.gabray.portfoliosh.command.sql.Table;
-import fr.gabray.portfoliosh.command.sql.statement.FromBuilder;
-import fr.gabray.portfoliosh.command.sql.statement.LimitBuilder;
-import fr.gabray.portfoliosh.command.sql.statement.OrderByBuilder;
-import fr.gabray.portfoliosh.command.sql.statement.StatementBuilder;
+import fr.gabray.portfoliosh.command.sql.statement.*;
 import fr.gabray.portfoliosh.exception.ParsingException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -165,5 +162,32 @@ class SqlParserTest {
 
         assertInstanceOf(LimitBuilder.class, builder);
         assertInstanceOf(OrderByBuilder.class, ((LimitBuilder) builder).parent());
+    }
+
+    @Test
+    void whereTest() throws ParsingException
+    {
+        SqlParser parser = new SqlParser("SELECT * FROM employees WHERE id = 1");
+
+        StatementBuilder builder = parser.parse(database);
+
+        assertInstanceOf(WhereBuilder.class, builder);
+        WhereBuilder builder1 = (WhereBuilder) builder;
+        assertInstanceOf(WhereLeafCondition.class, builder1.getCondition());
+        assertEquals("id", ((WhereLeafCondition) builder1.getCondition()).left());
+        assertEquals("1", ((WhereLeafCondition) builder1.getCondition()).right());
+    }
+
+    @Test
+    void whereMultipleTest() throws ParsingException
+    {
+        SqlParser parser = new SqlParser("SELECT * FROM employees WHERE id = 1 AND firstname != John");
+
+        StatementBuilder builder = parser.parse(database);
+
+        assertInstanceOf(WhereBuilder.class, builder);
+        WhereBuilder builder1 = (WhereBuilder) builder;
+        assertInstanceOf(WhereNodeCondition.class, builder1.getCondition());
+        assertEquals(SqlReservedWord.AND, ((WhereNodeCondition) builder1.getCondition()).operator());
     }
 }

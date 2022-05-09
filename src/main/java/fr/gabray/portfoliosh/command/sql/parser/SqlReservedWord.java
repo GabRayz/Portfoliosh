@@ -8,4 +8,6 @@ public enum SqlReservedWord {
     BY,
     DESC,
     LIMIT,
+    AND,
+    OR,
 }

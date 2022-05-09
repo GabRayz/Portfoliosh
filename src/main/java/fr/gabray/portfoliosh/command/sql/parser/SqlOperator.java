@@ -3,20 +3,28 @@ package fr.gabray.portfoliosh.command.sql.parser;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
+import java.util.function.BiPredicate;
 
 public enum SqlOperator {
-    EQUALS("="),
-    GREATER(">"),
-    LESSER("<"),
-    GREATER_EQUALS(">="),
-    LESSER_EQUALS("<="),
-    NOT_EQUALS("!="),
+    EQUALS("=", String::equals),
+    GREATER(">", (a, b) -> a.compareTo(b) > 0),
+    LESSER("<", (a, b) -> a.compareTo(b) < 0),
+    GREATER_EQUALS(">=", (a, b) -> a.compareTo(b) >= 0),
+    LESSER_EQUALS("<=", (a, b) -> a.compareTo(b) <= 0),
+    NOT_EQUALS("!=", (a, b) -> a.compareTo(b) != 0),
     ;
     public final String value;
+    private final BiPredicate<String, String> predicate;
 
-    SqlOperator(final String value)
+    SqlOperator(final String value, BiPredicate<String, String> predicate)
     {
         this.value = value;
+        this.predicate = predicate;
+    }
+
+    public boolean test(String a, String b)
+    {
+        return predicate.test(a, b);
     }
 
     @Nullable

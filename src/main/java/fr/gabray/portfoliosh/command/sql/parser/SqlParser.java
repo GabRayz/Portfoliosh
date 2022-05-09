@@ -49,9 +49,45 @@ public class SqlParser {
             throw new ParsingException("Expected table name");
 
         FromBuilder fromBuilder = select.from(token.getValue());
-
-        Limitable limitable = parseOrderBy(fromBuilder);
+        Orderable orderable = parseWhere(fromBuilder);
+        Limitable limitable = parseOrderBy(orderable);
         return parseLimit(limitable);
+    }
+
+    private Orderable parseWhere(Whereable whereable) throws ParsingException
+    {
+        SqlToken token = lexer.peek();
+        if (token.getType() != SqlTokenType.RESERVED_WORD || ((SqlReservedWordToken) token).getReservedWord() != SqlReservedWord.WHERE)
+            return whereable;
+        lexer.pop();
+
+        WhereBuilder where = whereable.where();
+        SqlReservedWord currentOp = null;
+        while (true)
+        {
+            token = lexer.pop();
+            if (token.getType() != SqlTokenType.WORD)
+                throw new ParsingException("Expected column name or value");
+            String left = token.getValue();
+            token = lexer.pop();
+            if (token.getType() != SqlTokenType.OPERATOR)
+                throw new ParsingException("Expected operator");
+            SqlOperator operator = ((OperatorSqlToken) token).getOperator();
+            token = lexer.pop();
+            if (token.getType() != SqlTokenType.WORD)
+                throw new ParsingException("Expected column name or value");
+            String right = token.getValue();
+            (currentOp == null ? where.column(left) : where.op(currentOp, left))
+                    .operator(operator)
+                    .column(right);
+
+            token = lexer.peek();
+            if (!(token instanceof SqlReservedWordToken reservedWordToken) || (reservedWordToken.getReservedWord() != SqlReservedWord.AND && reservedWordToken.getReservedWord() != SqlReservedWord.OR))
+                break;
+            lexer.pop();
+            currentOp = ((SqlReservedWordToken) token).getReservedWord();
+        }
+        return where;
     }
 
     private Limitable parseOrderBy(Orderable orderable) throws ParsingException

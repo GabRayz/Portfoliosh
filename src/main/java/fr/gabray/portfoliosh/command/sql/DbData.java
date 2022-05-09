@@ -16,6 +16,20 @@ public abstract class DbData implements Comparable<DbData> {
         return String.valueOf(get());
     }
 
+    @Override
+    public boolean equals(final Object obj)
+    {
+        if (obj instanceof DbData other)
+            return get().equals(other.get());
+        return false;
+    }
+
+    @Override
+    public int hashCode()
+    {
+        return get().hashCode();
+    }
+
     public static DbData of(Object object)
     {
         if (object instanceof Number number)

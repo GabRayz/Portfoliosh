@@ -1,13 +1,14 @@
 package fr.gabray.portfoliosh.command.sql.statement;
 
 import fr.gabray.portfoliosh.command.sql.*;
+import fr.gabray.portfoliosh.command.sql.parser.Whereable;
 import fr.gabray.portfoliosh.exception.SqlException;
 import lombok.Getter;
 
 import java.util.*;
 
 @Getter
-public class FromBuilder implements StatementBuilder, Orderable {
+public class FromBuilder implements StatementBuilder, Whereable {
     private final SelectBuilder select;
     private final String tableName;
 
@@ -25,6 +26,12 @@ public class FromBuilder implements StatementBuilder, Orderable {
     public LimitBuilder limit(long count)
     {
         return new LimitBuilder(this, count);
+    }
+
+    @Override
+    public WhereBuilder where()
+    {
+        return new WhereBuilder(this);
     }
 
     @Override
