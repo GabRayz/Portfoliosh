@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-public class OrderByBuilder implements StatementBuilder {
+public class OrderByBuilder implements StatementBuilder, Limitable {
     private final StatementBuilder parent;
     private final List<String> columns = new ArrayList<>();
     private boolean desc = false;

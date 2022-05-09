@@ -4,6 +4,7 @@ import fr.gabray.portfoliosh.command.sql.Column;
 import fr.gabray.portfoliosh.command.sql.Database;
 import fr.gabray.portfoliosh.command.sql.Table;
 import fr.gabray.portfoliosh.command.sql.statement.FromBuilder;
+import fr.gabray.portfoliosh.command.sql.statement.LimitBuilder;
 import fr.gabray.portfoliosh.command.sql.statement.OrderByBuilder;
 import fr.gabray.portfoliosh.command.sql.statement.StatementBuilder;
 import fr.gabray.portfoliosh.exception.ParsingException;
@@ -142,5 +143,27 @@ class SqlParserTest {
         assertEquals(2, ((OrderByBuilder) builder).getColumns().size());
         assertEquals("id", ((OrderByBuilder) builder).getColumns().get(0));
         assertEquals("firstname", ((OrderByBuilder) builder).getColumns().get(1));
+    }
+
+    @Test
+    void fromLimitTest() throws ParsingException
+    {
+        SqlParser parser = new SqlParser("SELECT * FROM employees LIMIT 42");
+
+        StatementBuilder builder = parser.parse(database);
+
+        assertInstanceOf(LimitBuilder.class, builder);
+        assertEquals(42, ((LimitBuilder) builder).count());
+    }
+
+    @Test
+    void fromOrderByLimitTest() throws ParsingException
+    {
+        SqlParser parser = new SqlParser("SELECT * FROM employees ORDER BY id LIMIT 42");
+
+        StatementBuilder builder = parser.parse(database);
+
+        assertInstanceOf(LimitBuilder.class, builder);
+        assertInstanceOf(OrderByBuilder.class, ((LimitBuilder) builder).parent());
     }
 }

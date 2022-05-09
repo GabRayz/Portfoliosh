@@ -50,21 +50,17 @@ public class SqlParser {
 
         FromBuilder fromBuilder = select.from(token.getValue());
 
-        token = lexer.pop();
-        if (token.getType() == SqlTokenType.EOI || token.getType() == SqlTokenType.COMMA)
-            return fromBuilder;
-        if (token.getType() != SqlTokenType.RESERVED_WORD)
-            throw new ParsingException("Unexpected token");
-
-        SqlReservedWord reservedWord = ((SqlReservedWordToken) token).getReservedWord();
-        if (reservedWord == SqlReservedWord.ORDER)
-            return parseOrderBy(fromBuilder);
-        return fromBuilder;
+        Limitable limitable = parseOrderBy(fromBuilder);
+        return parseLimit(limitable);
     }
 
-    private StatementBuilder parseOrderBy(Orderable orderable) throws ParsingException
+    private Limitable parseOrderBy(Orderable orderable) throws ParsingException
     {
-        SqlToken token = lexer.pop();
+        SqlToken token = lexer.peek();
+        if (token.getType() != SqlTokenType.RESERVED_WORD || ((SqlReservedWordToken) token).getReservedWord() != SqlReservedWord.ORDER)
+            return orderable;
+        lexer.pop();
+        token = lexer.pop();
         if (token.getType() != SqlTokenType.RESERVED_WORD || ((SqlReservedWordToken) token).getReservedWord() != SqlReservedWord.BY)
             throw new ParsingException("Expected BY");
 
@@ -81,6 +77,26 @@ public class SqlParser {
             orderBy.desc();
         }
         return orderBy;
+    }
+
+    private StatementBuilder parseLimit(Limitable limitable) throws ParsingException
+    {
+        SqlToken token = lexer.peek();
+        if (token.getType() != SqlTokenType.RESERVED_WORD || ((SqlReservedWordToken) token).getReservedWord() != SqlReservedWord.LIMIT)
+            return limitable;
+        lexer.pop();
+        token = lexer.pop();
+        if (token.getType() != SqlTokenType.WORD)
+            throw new ParsingException("Expected number");
+        try
+        {
+            int limit = Integer.parseInt(token.getValue());
+            return limitable.limit(limit);
+        }
+        catch (NumberFormatException e)
+        {
+            throw new ParsingException("Invalid number");
+        }
     }
 
     private List<String> parseColumnNames() throws ParsingException
