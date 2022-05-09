@@ -61,11 +61,11 @@ public class FromBuilder implements StatementBuilder {
         if (all)
         {
             for (final Map.Entry<Column, DbData> columnDbDataEntry : row.getData().entrySet())
-                map.put(columnDbDataEntry.getKey().name(), columnDbDataEntry.getValue());
+                map.put(columnDbDataEntry.getKey().name(), Objects.requireNonNullElseGet(columnDbDataEntry.getValue(), () -> DbData.of(null)));
             return map;
         }
         for (final Column column : columns)
-            map.put(column.name(), row.get(column));
+            map.put(column.name(), Objects.requireNonNullElseGet(row.get(column), () -> DbData.of(null)));
         return map;
     }
 }

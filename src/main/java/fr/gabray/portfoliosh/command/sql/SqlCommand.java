@@ -10,6 +10,7 @@ import fr.gabray.portfoliosh.exception.SqlException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -48,23 +49,53 @@ public class SqlCommand implements Command {
 
     private void printResult(OutputStream outputStream, ResultSet resultSet) throws IOException
     {
+        Map<String, Integer> widths = new HashMap<>();
         for (int i = 0; i < resultSet.columns().size(); i++)
         {
-            outputStream.write(resultSet.columns().get(i).getBytes(StandardCharsets.UTF_8));
+            String column = resultSet.columns().get(i);
+            widths.put(column, computeColumnWidth(resultSet, column));
+            outputStream.write(column.getBytes(StandardCharsets.UTF_8));
             if (i < resultSet.columns().size() - 1)
-                outputStream.write("\t\t| ".getBytes(StandardCharsets.UTF_8));
+                printSpaces(outputStream, widths.get(column), column.length());
         }
-        outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
+        printHorizontalSeparator(outputStream, widths);
         for (final Map<String, DbData> row : resultSet.data())
         {
             for (int i = 0; i < resultSet.columns().size(); i++)
             {
                 String column = resultSet.columns().get(i);
-                outputStream.write(row.get(column).toString().getBytes(StandardCharsets.UTF_8));
+                String data = row.get(column).toString();
+                outputStream.write(data.getBytes(StandardCharsets.UTF_8));
                 if (i < resultSet.columns().size() - 1)
-                    outputStream.write("\t\t| ".getBytes(StandardCharsets.UTF_8));
+                    printSpaces(outputStream, widths.get(column), data.length());
             }
             outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
         }
+    }
+
+    private void printHorizontalSeparator(OutputStream outputStream, Map<String, Integer> widths) throws IOException
+    {
+        int length = widths.values().stream().reduce(Integer::sum).orElse(0);
+        length += (widths.size() - 1) * 3;
+        outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
+        outputStream.write("-".repeat(length).getBytes(StandardCharsets.UTF_8));
+        outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
+    }
+
+    private void printSpaces(OutputStream outputStream, int totalWidth, int dataWidth) throws IOException
+    {
+        int missing = totalWidth + 1 - dataWidth;
+        outputStream.write(" ".repeat(missing).getBytes(StandardCharsets.UTF_8));
+        outputStream.write("| ".getBytes(StandardCharsets.UTF_8));
+    }
+
+    private int computeColumnWidth(ResultSet resultSet, String column)
+    {
+        int max = resultSet.data().stream()
+                           .map(map -> map.get(column).toString())
+                           .map(String::length)
+                           .max(Integer::compareTo)
+                           .orElse(3);
+        return Math.max(max, column.length());
     }
 }

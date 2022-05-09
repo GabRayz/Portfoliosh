@@ -22,6 +22,8 @@ public abstract class DbData implements Comparable<DbData> {
             return new NumberDbData(number);
         else if (object instanceof String str)
             return new StringDbData(str);
+        else if (object == null)
+            return new StringDbData(null);
         throw new IllegalArgumentException();
     }
 }

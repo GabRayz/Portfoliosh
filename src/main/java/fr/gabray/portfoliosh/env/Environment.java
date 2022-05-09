@@ -85,7 +85,8 @@ public class Environment {
         environment.database.addTable(skills);
         skills.addColumn(new Column("id"), true);
         skills.addColumn(new Column("name"), false);
-        skills.insertObj(Map.of("name", "Java"));
+        skills.addColumn(new Column("level"), false);
+        skills.insertObj(Map.of("name", "Java", "level", "pro"));
         skills.insertObj(Map.of("name", "C++"));
         skills.insertObj(Map.of("name", "C"));
         skills.insertObj(Map.of("name", "Javascript"));
