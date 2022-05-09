@@ -17,7 +17,8 @@ public final class CommandManager {
             "pwd", new PwdCommand(),
             "cat", new CatCommand(),
             "echo", new EchoCommand(),
-            "sql", new SqlCommand()
+            "sql", new SqlCommand(),
+            "help", new HelpCommand()
     );
 
     public static Optional<Command> get(String name)

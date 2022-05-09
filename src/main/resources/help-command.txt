@@ -1,0 +1,7 @@
+`ls [path]`     : List files in the current working directory or in the provided path
+`pwd`           : Show the path to the current working directory
+`cd [path]`     : Go to directory denoted by path, or to root folder
+`cat [path]`    : Print the content of a file
+`sql {query}`   : Execute an SQL query
+`clear`         : Clears the terminal
+`help`          : Well you know...
