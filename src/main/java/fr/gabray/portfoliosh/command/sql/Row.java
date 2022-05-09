@@ -6,27 +6,28 @@ import java.util.stream.Collectors;
 
 public class Row {
 
-    private final Map<Column, Object> data;
+    private final Map<Column, DbData> data;
 
-    public Row(final Map<Column, Object> data)
+    public Row(final Map<Column, DbData> data)
     {
         this.data = data;
     }
 
-    public Map<Column, Object> getData()
+    public Map<Column, DbData> getData()
     {
         return data;
     }
 
-    public Object get(Column column)
+    public DbData get(Column column)
     {
         return data.get(column);
     }
 
-    public Map<Column, Object> get(Collection<Column> columns)
+    public Map<Column, DbData> get(Collection<Column> columns)
     {
         return data.entrySet().stream()
                    .filter(entry -> columns.contains(entry.getKey()))
                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 }
+

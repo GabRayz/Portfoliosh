@@ -3,10 +3,7 @@ package fr.gabray.portfoliosh.command.sql.statement;
 import fr.gabray.portfoliosh.command.sql.*;
 import fr.gabray.portfoliosh.exception.SqlException;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FromBuilder implements StatementBuilder {
     private final SelectBuilder select;
@@ -49,16 +46,16 @@ public class FromBuilder implements StatementBuilder {
         // Get all rows
         Collection<Row> rows = table.getRows().values();
         // copy wanted columns
-        List<Map<String, Object>> resultRows = rows.stream()
+        List<Map<String, DbData>> resultRows = rows.stream()
                                                    .map(row -> selectOnRow(row, columns))
                                                    .toList();
 
-        return new ResultSet(select.getColumns(), resultRows);
+        return new ResultSet(select.getColumns(), new ArrayList<>(resultRows));
     }
 
-    private Map<String, Object> selectOnRow(Row row, List<Column> columns)
+    private Map<String, DbData> selectOnRow(Row row, List<Column> columns)
     {
-        Map<String, Object> map = new HashMap<>();
+        Map<String, DbData> map = new HashMap<>();
         for (final Column column : columns)
             map.put(column.name(), row.get(column));
         return map;

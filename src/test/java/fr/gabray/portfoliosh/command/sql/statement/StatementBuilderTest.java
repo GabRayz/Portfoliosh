@@ -28,22 +28,22 @@ class StatementBuilderTest {
         employees.addColumn(new Column("lastname"), false);
         employees.addColumn(new Column("age"), false);
 
-        employees.insert(Map.of(
+        employees.insertObj(Map.of(
                 "firstname", "John",
                 "lastname", "Smith",
                 "age", 22
         ));
-        employees.insert(Map.of(
+        employees.insertObj(Map.of(
                 "firstname", "Jack",
                 "lastname", "Sparrow",
                 "age", 28
         ));
-        employees.insert(Map.of(
+        employees.insertObj(Map.of(
                 "firstname", "Obiwan",
                 "lastname", "Kennobi",
                 "age", 30
         ));
-        employees.insert(Map.of(
+        employees.insertObj(Map.of(
                 "firstname", "Darth",
                 "lastname", "Vador",
                 "age", 25
@@ -103,17 +103,17 @@ class StatementBuilderTest {
 
         assertEquals(2, result.columns().size());
         assertEquals(4, result.data().size());
-        assertEquals("John", result.data().get(0).get("firstname"));
-        assertEquals("Jack", result.data().get(1).get("firstname"));
-        assertEquals("Obiwan", result.data().get(2).get("firstname"));
-        assertEquals("Darth", result.data().get(3).get("firstname"));
+        assertEquals("John", result.data().get(0).get("firstname").toString());
+        assertEquals("Jack", result.data().get(1).get("firstname").toString());
+        assertEquals("Obiwan", result.data().get(2).get("firstname").toString());
+        assertEquals("Darth", result.data().get(3).get("firstname").toString());
     }
 
     @Test
     void orderByAgeTest()
     {
         StatementBuilder statement = new SelectBuilder()
-                .column("id").column("firstname")
+                .column("age").column("firstname")
                 .from("employees")
                 .orderBy("age");
 
@@ -121,17 +121,17 @@ class StatementBuilderTest {
 
         assertEquals(2, result.columns().size());
         assertEquals(4, result.data().size());
-        assertEquals("John", result.data().get(0).get("firstname"));
-        assertEquals("Darth", result.data().get(1).get("firstname"));
-        assertEquals("Jack", result.data().get(2).get("firstname"));
-        assertEquals("Obiwan", result.data().get(3).get("firstname"));
+        assertEquals("John", result.data().get(0).get("firstname").toString());
+        assertEquals("Darth", result.data().get(1).get("firstname").toString());
+        assertEquals("Jack", result.data().get(2).get("firstname").toString());
+        assertEquals("Obiwan", result.data().get(3).get("firstname").toString());
     }
 
     @Test
     void orderByAgeDescTest()
     {
         StatementBuilder statement = new SelectBuilder()
-                .column("id").column("firstname")
+                .column("age").column("firstname")
                 .from("employees")
                 .orderBy("age")
                 .desc();
@@ -140,9 +140,20 @@ class StatementBuilderTest {
 
         assertEquals(2, result.columns().size());
         assertEquals(4, result.data().size());
-        assertEquals("John", result.data().get(3).get("firstname"));
-        assertEquals("Darth", result.data().get(2).get("firstname"));
-        assertEquals("Jack", result.data().get(1).get("firstname"));
-        assertEquals("Obiwan", result.data().get(0).get("firstname"));
+        assertEquals("John", result.data().get(3).get("firstname").toString());
+        assertEquals("Darth", result.data().get(2).get("firstname").toString());
+        assertEquals("Jack", result.data().get(1).get("firstname").toString());
+        assertEquals("Obiwan", result.data().get(0).get("firstname").toString());
+    }
+
+    @Test
+    void orderByInvalidColumnTest()
+    {
+        StatementBuilder statement = new SelectBuilder()
+                .column("id").column("firstname")
+                .from("employees")
+                .orderBy("age");
+
+        assertThrows(SqlException.class, () -> statement.execute(database));
     }
 }

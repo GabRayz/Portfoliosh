@@ -6,6 +6,7 @@ import lombok.Setter;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Getter
 public final class Table {
@@ -43,11 +44,18 @@ public final class Table {
             this.primaryKey = column;
     }
 
-    public void insert(Map<String, Object> row)
+    public void insertObj(Map<String, Object> row)
     {
-        Map<Column, Object> data = new HashMap<>();
+        insert(row.entrySet()
+                  .stream()
+                  .collect(Collectors.toMap(Map.Entry::getKey, entry -> DbData.of(entry.getValue()))));
+    }
+
+    public void insert(Map<String, DbData> row)
+    {
+        Map<Column, DbData> data = new HashMap<>();
         columns.forEach((name, col) -> data.put(col, row.get(name)));
-        data.put(primaryKey, idIncrement);
+        data.put(primaryKey, DbData.of(idIncrement));
         rows.put(idIncrement++, new Row(data));
     }
 }
