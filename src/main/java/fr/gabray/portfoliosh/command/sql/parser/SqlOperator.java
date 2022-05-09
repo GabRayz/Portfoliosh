@@ -1,5 +1,6 @@
 package fr.gabray.portfoliosh.command.sql.parser;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
@@ -12,6 +13,9 @@ public enum SqlOperator {
     GREATER_EQUALS(">=", (a, b) -> a.compareTo(b) >= 0),
     LESSER_EQUALS("<=", (a, b) -> a.compareTo(b) <= 0),
     NOT_EQUALS("!=", (a, b) -> a.compareTo(b) != 0),
+    IS("is", null),
+    IS_NULL(null, (a, b) -> a.equals("null")),
+    IS_NOT_NULL(null, (a, b) -> !a.equals("null")),
     ;
     public final String value;
     private final BiPredicate<String, String> predicate;
@@ -28,11 +32,11 @@ public enum SqlOperator {
     }
 
     @Nullable
-    public static SqlOperator of(String value)
+    public static SqlOperator of(@NotNull String value)
     {
         for (final SqlOperator sqlOperator : values())
         {
-            if (sqlOperator.value.equals(value))
+            if (value.equals(sqlOperator.value))
                 return sqlOperator;
         }
         return null;
@@ -45,6 +49,8 @@ public enum SqlOperator {
 
     public static boolean isPartOfOp(String value)
     {
-        return Arrays.stream(values()).map(SqlOperator::getValue).anyMatch(val -> val.startsWith(value));
+        return Arrays.stream(values())
+                     .map(SqlOperator::getValue)
+                     .anyMatch(val -> val != null && val.startsWith(value));
     }
 }

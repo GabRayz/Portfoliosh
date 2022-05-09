@@ -73,10 +73,29 @@ public class SqlParser {
             if (token.getType() != SqlTokenType.OPERATOR)
                 throw new ParsingException("Expected operator");
             SqlOperator operator = ((OperatorSqlToken) token).getOperator();
-            token = lexer.pop();
-            if (token.getType() != SqlTokenType.WORD)
-                throw new ParsingException("Expected column name or value");
-            String right = token.getValue();
+
+            String right = null;
+            if (operator == SqlOperator.IS)
+            {
+                token = lexer.pop();
+                boolean not = false;
+                if (token.getValue().equals("not"))
+                {
+                    not = true;
+                    token = lexer.pop();
+                }
+                if (!token.getValue().equals("null"))
+                    throw new ParsingException("Expected 'null'");
+                operator = not ? SqlOperator.IS_NOT_NULL : SqlOperator.IS_NULL;
+            }
+            else
+            {
+                token = lexer.pop();
+                if (token.getType() != SqlTokenType.WORD)
+                    throw new ParsingException("Expected column name or value");
+                right = token.getValue();
+            }
+
             (currentOp == null ? where.column(left) : where.op(currentOp, left))
                     .operator(operator)
                     .column(right);

@@ -15,6 +15,8 @@ public record WhereLeafCondition(String left, String right, SqlOperator operator
 
     private String resolve(final Map<String, DbData> row, String name)
     {
+        if (name == null)
+            return null;
         if (row.containsKey(name))
             return row.get(name).toString();
         return name;

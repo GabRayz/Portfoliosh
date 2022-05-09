@@ -179,6 +179,36 @@ class SqlParserTest {
     }
 
     @Test
+    void whereIsNullTest() throws ParsingException
+    {
+        SqlParser parser = new SqlParser("SELECT * FROM employees WHERE id is null");
+
+        StatementBuilder builder = parser.parse(database);
+
+        assertInstanceOf(WhereBuilder.class, builder);
+        WhereBuilder builder1 = (WhereBuilder) builder;
+        assertInstanceOf(WhereLeafCondition.class, builder1.getCondition());
+        assertEquals("id", ((WhereLeafCondition) builder1.getCondition()).left());
+        assertEquals(SqlOperator.IS_NULL, ((WhereLeafCondition) builder1.getCondition()).operator());
+        assertNull(((WhereLeafCondition) builder1.getCondition()).right());
+    }
+
+    @Test
+    void whereIsNotNullTest() throws ParsingException
+    {
+        SqlParser parser = new SqlParser("SELECT * FROM employees WHERE id is not null");
+
+        StatementBuilder builder = parser.parse(database);
+
+        assertInstanceOf(WhereBuilder.class, builder);
+        WhereBuilder builder1 = (WhereBuilder) builder;
+        assertInstanceOf(WhereLeafCondition.class, builder1.getCondition());
+        assertEquals("id", ((WhereLeafCondition) builder1.getCondition()).left());
+        assertEquals(SqlOperator.IS_NOT_NULL, ((WhereLeafCondition) builder1.getCondition()).operator());
+        assertNull(((WhereLeafCondition) builder1.getCondition()).right());
+    }
+
+    @Test
     void whereMultipleTest() throws ParsingException
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees WHERE id = 1 AND firstname != John");

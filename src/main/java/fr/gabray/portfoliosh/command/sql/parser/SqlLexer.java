@@ -74,7 +74,7 @@ public class SqlLexer {
                 else
                     return input.subSequence(start, index).toString();
             }
-            if (SqlOperator.isPartOfOp(String.valueOf(current)))
+            if (current != 'i' && SqlOperator.isPartOfOp(String.valueOf(current)))
             {
                 if (start == index)
                 {
