@@ -10,7 +10,7 @@ import fr.gabray.portfoliosh.exception.SqlException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -49,7 +49,7 @@ public class SqlCommand implements Command {
 
     private void printResult(OutputStream outputStream, ResultSet resultSet) throws IOException
     {
-        Map<String, Integer> widths = new HashMap<>();
+        Map<String, Integer> widths = new LinkedHashMap<>();
         for (int i = 0; i < resultSet.columns().size(); i++)
         {
             String column = resultSet.columns().get(i);
@@ -75,10 +75,14 @@ public class SqlCommand implements Command {
 
     private void printHorizontalSeparator(OutputStream outputStream, Map<String, Integer> widths) throws IOException
     {
-        int length = widths.values().stream().reduce(Integer::sum).orElse(0);
-        length += (widths.size() - 1) * 3;
+        int i = 0;
         outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
-        outputStream.write("-".repeat(length).getBytes(StandardCharsets.UTF_8));
+        for (final Integer width : widths.values())
+        {
+            outputStream.write("-".repeat(width).getBytes(StandardCharsets.UTF_8));
+            if (i++ < widths.size() - 1)
+                outputStream.write("-+-".getBytes(StandardCharsets.UTF_8));
+        }
         outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
     }
 
