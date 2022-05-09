@@ -17,6 +17,12 @@ public class SelectBuilder implements StatementBuilder {
         return this;
     }
 
+    public SelectBuilder all()
+    {
+        this.all = true;
+        return this;
+    }
+
     public FromBuilder allFrom(String tableName)
     {
         this.all = true;

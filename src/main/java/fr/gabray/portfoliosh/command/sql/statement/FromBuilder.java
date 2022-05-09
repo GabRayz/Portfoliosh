@@ -2,9 +2,11 @@ package fr.gabray.portfoliosh.command.sql.statement;
 
 import fr.gabray.portfoliosh.command.sql.*;
 import fr.gabray.portfoliosh.exception.SqlException;
+import lombok.Getter;
 
 import java.util.*;
 
+@Getter
 public class FromBuilder implements StatementBuilder {
     private final SelectBuilder select;
     private final String tableName;

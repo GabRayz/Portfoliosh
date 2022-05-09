@@ -62,4 +62,22 @@ class SqlLexerTest {
         token = lexer.pop();
         assertEquals(SqlTokenType.EOI, token.getType());
     }
+
+    @Test
+    void threeWordsTest()
+    {
+        SqlLexer lexer = new SqlLexer("foo * bar");
+
+        SqlToken token = lexer.pop();
+        assertEquals(SqlTokenType.WORD, token.getType());
+        assertEquals("foo", token.getValue());
+        token = lexer.pop();
+        assertEquals(SqlTokenType.WORD, token.getType());
+        assertEquals("*", token.getValue());
+        token = lexer.pop();
+        assertEquals(SqlTokenType.WORD, token.getType());
+        assertEquals("bar", token.getValue());
+        token = lexer.pop();
+        assertEquals(SqlTokenType.EOI, token.getType());
+    }
 }
