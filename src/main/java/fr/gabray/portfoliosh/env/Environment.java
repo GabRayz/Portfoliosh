@@ -1,5 +1,8 @@
 package fr.gabray.portfoliosh.env;
 
+import fr.gabray.portfoliosh.command.sql.Column;
+import fr.gabray.portfoliosh.command.sql.Database;
+import fr.gabray.portfoliosh.command.sql.Table;
 import fr.gabray.portfoliosh.exception.EnvironmentInitException;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,6 +12,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Map;
 import java.util.Objects;
 
 public class Environment {
@@ -18,11 +22,14 @@ public class Environment {
     @Getter
     @Setter
     private FakeFile workingDirectory;
+    @Getter
+    private Database database;
 
     public Environment()
     {
         rootFolder = new FakeFile(null, FakeFile.Type.FOLDER, "");
         workingDirectory = rootFolder;
+        this.database = new Database();
     }
 
     public FakeFile createFile(@NotNull FakeFile.Type type, @NotNull FakeFile parent, @NotNull String name)
@@ -73,6 +80,16 @@ public class Environment {
         }
 
         addFilesToEnv(environment, file, environment.getRootFolder());
+
+        Table skills = new Table("skills");
+        environment.database.addTable(skills);
+        skills.addColumn(new Column("id"), true);
+        skills.addColumn(new Column("name"), false);
+        skills.insertObj(Map.of("name", "Java"));
+        skills.insertObj(Map.of("name", "C++"));
+        skills.insertObj(Map.of("name", "C"));
+        skills.insertObj(Map.of("name", "Javascript"));
+        skills.insertObj(Map.of("name", "Python"));
 
         return environment;
     }
