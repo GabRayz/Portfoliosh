@@ -5,4 +5,5 @@ public enum SqlTokenType {
     COMMA,
     RESERVED_WORD,
     EOI,
+    OPERATOR,
 }

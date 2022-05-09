@@ -25,6 +25,9 @@ public class SqlLexer {
         if (word.equals(","))
             return new SqlToken(word, SqlTokenType.COMMA);
 
+        SqlOperator op = SqlOperator.of(word);
+        if (op != null)
+            return new OperatorSqlToken(word, op);
         try
         {
             SqlReservedWord sqlReservedWord = SqlReservedWord.valueOf(word.toUpperCase());
@@ -67,6 +70,23 @@ public class SqlLexer {
                     start++;
                     index++;
                     continue;
+                }
+                else
+                    return input.subSequence(start, index).toString();
+            }
+            if (SqlOperator.isPartOfOp(String.valueOf(current)))
+            {
+                if (start == index)
+                {
+                    index++;
+                    continue;
+                }
+                String withLast = input.subSequence(start, index + 1).toString();
+                SqlOperator op = SqlOperator.of(withLast);
+                if (op != null)
+                {
+                    index++;
+                    return withLast;
                 }
                 else
                     return input.subSequence(start, index).toString();
