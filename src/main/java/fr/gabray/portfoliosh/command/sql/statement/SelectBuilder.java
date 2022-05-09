@@ -1,6 +1,7 @@
 package fr.gabray.portfoliosh.command.sql.statement;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SelectBuilder implements StatementBuilder {
@@ -15,5 +16,10 @@ public class SelectBuilder implements StatementBuilder {
     public FromBuilder from(String tableName)
     {
         return new FromBuilder(this, tableName);
+    }
+
+    public List<String> getColumns()
+    {
+        return Collections.unmodifiableList(columns);
     }
 }

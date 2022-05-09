@@ -17,6 +17,7 @@ public final class Table {
     private Column primaryKey;
 
     private final Map<Object, Row> rows = new HashMap<>();
+    private long idIncrement = 1;
 
     public Table(final String name)
     {
@@ -40,6 +41,14 @@ public final class Table {
         columns.put(column.name(), column);
         if (primaryKey)
             this.primaryKey = column;
+    }
+
+    public void insert(Map<String, Object> row)
+    {
+        Map<Column, Object> data = new HashMap<>();
+        columns.forEach((name, col) -> data.put(col, row.get(name)));
+        data.put(primaryKey, idIncrement);
+        rows.put(idIncrement++, new Row(data));
     }
 }
 
