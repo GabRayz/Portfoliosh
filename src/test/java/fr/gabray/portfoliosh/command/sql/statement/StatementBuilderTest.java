@@ -172,4 +172,17 @@ class StatementBuilderTest {
 
         assertThrows(SqlException.class, () -> statement.execute(database));
     }
+
+    @Test
+    void limitTest()
+    {
+        StatementBuilder statement = new SelectBuilder()
+                .allFrom("employees")
+                .limit(2);
+
+        ResultSet result = statement.execute(database);
+
+        assertEquals(4, result.columns().size());
+        assertEquals(2, result.data().size());
+    }
 }
