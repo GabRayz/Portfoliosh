@@ -46,6 +46,12 @@ async function sendInput(userInput) {
 }
 
 document.querySelector('.input-container').onsubmit = function () {
+    if (input.value === 'clear') {
+        outputArea.value = '';
+        outputArea.rows = 1;
+        input.value = '';
+        return false;
+    }
     sendInput(input.value);
 
     return false;
