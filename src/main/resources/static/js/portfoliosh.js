@@ -29,6 +29,9 @@ function display(message) {
     window.scroll(0, document.body.scrollHeight);
 }
 
+let history = [];
+let historyIndex = 0;
+
 async function sendInput(userInput) {
     display('portfoliosh$ ' + userInput);
     input.value = '';
@@ -40,6 +43,8 @@ async function sendInput(userInput) {
         display('Connected!');
         display('portfoliosh$ ' + userInput);
     }
+    history.push(userInput);
+    historyIndex = history.length;
     stompClient.send("/sock/send", {}, JSON.stringify({
         'input': userInput
     }));
@@ -55,6 +60,27 @@ document.querySelector('.input-container').onsubmit = function () {
     sendInput(input.value);
 
     return false;
+}
+
+document.addEventListener('keydown', function (e) {
+    if (e.key === 'ArrowUp') {
+        historyIndex--;
+        if (historyIndex < 0)
+            historyIndex = 0;
+        restoreHistory();
+    } else if (e.key === 'ArrowDown') {
+        historyIndex++;
+        if (historyIndex >= history.length)
+            historyIndex = history.length;
+        restoreHistory();
+    }
+});
+
+function restoreHistory() {
+    if (historyIndex === history.length)
+        input.value = '';
+    else
+        input.value = history[historyIndex]
 }
 
 connect().then(() => sendInput("cat welcome.md"))
