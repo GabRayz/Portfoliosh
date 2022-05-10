@@ -81,16 +81,25 @@ public class Environment {
 
         addFilesToEnv(environment, file, environment.getRootFolder());
 
+        Table levels = new Table("levels");
+        levels.addColumn(new Column("id"), true);
+        levels.addColumn(new Column("value"), false);
+        levels.insertObj(Map.of("value", "pro"));
+        levels.insertObj(Map.of("value", "good"));
+        levels.insertObj(Map.of("value", "basics"));
+        levels.insertObj(Map.of("value", "low"));
+        environment.database.addTable(levels);
+
         Table skills = new Table("skills");
         environment.database.addTable(skills);
         skills.addColumn(new Column("id"), true);
         skills.addColumn(new Column("name"), false);
         skills.addColumn(new Column("level"), false);
-        skills.insertObj(Map.of("name", "Java", "level", "pro"));
-        skills.insertObj(Map.of("name", "C++"));
-        skills.insertObj(Map.of("name", "C"));
-        skills.insertObj(Map.of("name", "Javascript"));
-        skills.insertObj(Map.of("name", "Python"));
+        skills.insertObj(Map.of("name", "Java", "level", "1"));
+        skills.insertObj(Map.of("name", "C++", "level", "2"));
+        skills.insertObj(Map.of("name", "C", "level", "2"));
+        skills.insertObj(Map.of("name", "Javascript", "level", "2"));
+        skills.insertObj(Map.of("name", "Python", "level", "3"));
 
         return environment;
     }

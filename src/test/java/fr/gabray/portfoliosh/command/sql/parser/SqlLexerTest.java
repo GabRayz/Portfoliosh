@@ -136,4 +136,17 @@ class SqlLexerTest {
         assertEquals(SqlTokenType.WORD, token.getType());
         assertEquals("val", token.getValue());
     }
+
+    @Test
+    void joinTest()
+    {
+        SqlLexer lexer = new SqlLexer("JOIN table");
+
+        SqlToken token = lexer.pop();
+        assertEquals(SqlTokenType.RESERVED_WORD, token.getType());
+        assertEquals(SqlReservedWord.JOIN, ((SqlReservedWordToken) token).getReservedWord());
+        token = lexer.pop();
+        assertEquals(SqlTokenType.WORD, token.getType());
+        assertEquals("table", token.getValue());
+    }
 }

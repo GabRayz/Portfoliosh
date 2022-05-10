@@ -49,9 +49,38 @@ public class SqlParser {
             throw new ParsingException("Expected table name");
 
         FromBuilder fromBuilder = select.from(token.getValue());
-        Orderable orderable = parseWhere(fromBuilder);
+        Whereable whereable = parseJoin(fromBuilder);
+        Orderable orderable = parseWhere(whereable);
         Limitable limitable = parseOrderBy(orderable);
         return parseLimit(limitable);
+    }
+
+    private Whereable parseJoin(Joinable joinable) throws ParsingException
+    {
+        SqlToken token = lexer.peek();
+        if (token.getType() != SqlTokenType.RESERVED_WORD || ((SqlReservedWordToken) token).getReservedWord() != SqlReservedWord.JOIN)
+            return joinable;
+        lexer.pop();
+
+        SqlToken tableName = lexer.pop();
+        if (tableName.getType() != SqlTokenType.WORD)
+            throw new ParsingException("Expected table name");
+
+        token = lexer.pop();
+        if (token.getType() != SqlTokenType.RESERVED_WORD || ((SqlReservedWordToken) token).getReservedWord() != SqlReservedWord.ON)
+            throw new ParsingException("Expected ON");
+
+        SqlToken left = lexer.pop();
+        if (left.getType() != SqlTokenType.WORD)
+            throw new ParsingException("Expected column name");
+        token = lexer.pop();
+        if (token.getType() != SqlTokenType.OPERATOR || ((OperatorSqlToken) token).getOperator() != SqlOperator.EQUALS)
+            throw new ParsingException("Expected =");
+        SqlToken right = lexer.pop();
+        if (right.getType() != SqlTokenType.WORD)
+            throw new ParsingException("Expected column name");
+
+        return joinable.join(tableName.getValue(), left.getValue(), right.getValue());
     }
 
     private Orderable parseWhere(Whereable whereable) throws ParsingException

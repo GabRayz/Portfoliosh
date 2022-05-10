@@ -2,6 +2,8 @@ package fr.gabray.portfoliosh.command.sql;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Objects;
+
 public abstract class DbData implements Comparable<DbData> {
 
     protected DbData()
@@ -20,7 +22,7 @@ public abstract class DbData implements Comparable<DbData> {
     public boolean equals(final Object obj)
     {
         if (obj instanceof DbData other)
-            return get().equals(other.get());
+            return Objects.equals(get(), other.get());
         return false;
     }
 

@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.util.*;
 
 @Getter
-public class FromBuilder implements StatementBuilder, Whereable {
+public class FromBuilder implements Joinable {
     private final SelectBuilder select;
     private final String tableName;
 
@@ -32,6 +32,12 @@ public class FromBuilder implements StatementBuilder, Whereable {
     public WhereBuilder where()
     {
         return new WhereBuilder(this);
+    }
+
+    @Override
+    public Whereable join(final String tableName, final String left, final String right)
+    {
+        return new JoinBuilder(this, tableName, left, right);
     }
 
     @Override

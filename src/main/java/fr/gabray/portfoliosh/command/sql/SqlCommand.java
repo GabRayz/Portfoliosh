@@ -96,7 +96,7 @@ public class SqlCommand implements Command {
     private int computeColumnWidth(ResultSet resultSet, String column)
     {
         int max = resultSet.data().stream()
-                           .map(map -> map.get(column).toString())
+                           .map(map -> map.getOrDefault(column, DbData.of(null)).toString())
                            .map(String::length)
                            .max(Integer::compareTo)
                            .orElse(3);

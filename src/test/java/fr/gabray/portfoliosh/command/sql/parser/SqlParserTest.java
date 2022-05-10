@@ -26,6 +26,11 @@ class SqlParserTest {
         employees.addColumn(new Column("firstname"), false);
         employees.addColumn(new Column("lastname"), false);
         employees.addColumn(new Column("age"), false);
+        employees.addColumn(new Column("company_id"), false);
+        Table companies = new Table("companies");
+        database.addTable(companies);
+        companies.addColumn(new Column("id"), true);
+        companies.addColumn(new Column("name"), false);
 
         employees.insertObj(Map.of(
                 "firstname", "John",
@@ -219,5 +224,19 @@ class SqlParserTest {
         WhereBuilder builder1 = (WhereBuilder) builder;
         assertInstanceOf(WhereNodeCondition.class, builder1.getCondition());
         assertEquals(SqlReservedWord.AND, ((WhereNodeCondition) builder1.getCondition()).operator());
+    }
+
+    @Test
+    void joinTest() throws ParsingException
+    {
+        SqlParser parser = new SqlParser("SELECT * FROM employees JOIN companies ON employees.company_id = companies.id");
+
+        StatementBuilder builder = parser.parse(database);
+
+        assertInstanceOf(JoinBuilder.class, builder);
+        JoinBuilder builder1 = (JoinBuilder) builder;
+        assertEquals("companies", builder1.getTableName());
+        assertEquals("employees.company_id", builder1.getLeft());
+        assertEquals("companies.id", builder1.getRight());
     }
 }
