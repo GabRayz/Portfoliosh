@@ -14,11 +14,11 @@ import static org.junit.jupiter.api.Assertions.*;
 class ParserTest {
 
     @Test
-    void shouldThrowParsingExceptionWhenParseIsCalledWithEmptyLexer()
+    void shouldThrowParsingExceptionWhenParseIsCalledWithEmptyLexer() throws ParsingException
     {
         Parser parser = new Parser(new Lexer(""));
 
-        assertThrows(ParsingException.class, parser::parse);
+        assertNull(parser.parse());
     }
 
     @Test

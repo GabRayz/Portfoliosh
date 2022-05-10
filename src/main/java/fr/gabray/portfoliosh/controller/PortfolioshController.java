@@ -50,6 +50,11 @@ public class PortfolioshController {
             Environment env = (Environment) sessionAttributes.computeIfAbsent("env", key -> Environment.defaultEnv());
             Parser parser = new Parser(new Lexer(model.getInput()));
             Ast ast = parser.parse();
+            if (ast == null)
+            {
+                simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel(""));
+                return;
+            }
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
             ast.execute(env, outputStream);
             simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel(outputStream.toString()));

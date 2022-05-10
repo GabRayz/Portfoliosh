@@ -18,13 +18,27 @@ public class Parser {
         this.lexer = lexer;
     }
 
+    private void skipNewlines() throws IOException
+    {
+        Token token = lexer.peek();
+        while (token.getType() == TokenType.NEWLINE)
+        {
+            lexer.pop();
+            token = lexer.peek();
+        }
+    }
+
     public CompleteCommandAst parse() throws ParsingException
     {
         try
         {
+            skipNewlines();
             ListAst listAst = parseListAst();
             if (listAst == null)
-                throw new ParsingException("Unexpected end of input");
+                return null;
+            Token token = lexer.peek();
+            if (token.getType() != TokenType.NEWLINE && token.getType() != TokenType.EOI)
+                throw new ParsingException("Unexpected token");
             return new CompleteCommandAst(listAst);
         }
         catch (IOException e)
