@@ -34,6 +34,9 @@ public class Lexer {
         if (word.isEmpty())
             return Token.EOI;
 
+        if (word.equals("\n"))
+            return new Token(TokenType.NEWLINE, "\n");
+
         Operator operator = Operator.of(word);
         if (operator != null)
             return new OperatorToken(word, operator);
@@ -94,6 +97,15 @@ public class Lexer {
             if (last != '\0' && Operator.isOp(read + ""))
             {
                 inputStream.pushBack(read);
+                return builder.toString();
+            }
+
+            if (read == '\n')
+            {
+                if (builder.isEmpty())
+                    builder.append(read);
+                else
+                    inputStream.pushBack(read);
                 return builder.toString();
             }
 

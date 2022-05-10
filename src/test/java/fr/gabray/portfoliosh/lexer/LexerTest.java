@@ -125,4 +125,21 @@ class LexerTest {
         assertEquals(TokenType.WORD, token.getType());
         assertEquals("foo\\ bar", token.getValue());
     }
+
+    @Test
+    void newlineDelimiterTest() throws IOException
+    {
+        Lexer lexer = new Lexer("foo\n\nbar");
+
+        Token token = lexer.pop();
+        assertEquals(TokenType.WORD, token.getType());
+        assertEquals("foo", token.getValue());
+        token = lexer.pop();
+        assertEquals(TokenType.NEWLINE, token.getType());
+        token = lexer.pop();
+        assertEquals(TokenType.NEWLINE, token.getType());
+        token = lexer.pop();
+        assertEquals(TokenType.WORD, token.getType());
+        assertEquals("bar", token.getValue());
+    }
 }
