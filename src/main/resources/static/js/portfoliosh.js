@@ -43,8 +43,10 @@ async function sendInput(userInput) {
         display('Connected!');
         display('portfoliosh$ ' + userInput);
     }
-    history.push(userInput);
-    historyIndex = history.length;
+    if (userInput !== '') {
+        history.push(userInput);
+        historyIndex = history.length;
+    }
     stompClient.send("/sock/send", {}, JSON.stringify({
         'input': userInput
     }));
