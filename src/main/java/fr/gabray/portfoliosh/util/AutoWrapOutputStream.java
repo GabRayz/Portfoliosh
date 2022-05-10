@@ -1,5 +1,6 @@
 package fr.gabray.portfoliosh.util;
 
+import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
@@ -8,6 +9,7 @@ import java.nio.charset.StandardCharsets;
 
 public final class AutoWrapOutputStream extends ByteArrayOutputStream {
 
+    @Getter
     private final int maxWidth;
 
     public AutoWrapOutputStream(int maxWidth)

@@ -7,6 +7,7 @@ import fr.gabray.portfoliosh.util.AutoWrapOutputStream;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 public class LsCommand implements Command {
@@ -25,23 +26,43 @@ public class LsCommand implements Command {
             if (folder.getType() != FakeFile.Type.FOLDER)
                 return error(outputStream, "Not a directory");
             Collection<FakeFile> files = folder.getFiles();
-            files.forEach(file -> {
-                String s = file.getName() + (file.getType() == FakeFile.Type.FOLDER ? "/" : "") + "\t";
-                try
-                {
-                    outputStream.write(s);
-                }
-                catch (IOException e)
-                {
-                    throw new CommandRuntimeException(e);
-                }
-            });
-            outputStream.write("\n");
+            print(outputStream, files);
         }
         catch (FileNotFoundException e)
         {
             return error(outputStream, "No such file or directory");
         }
         return 0;
+    }
+
+    private void print(AutoWrapOutputStream outputStream, Collection<FakeFile> files) throws IOException
+    {
+        int maxWidth = 10 + files.stream()
+                                 .map(FakeFile::getName)
+                                 .map(String::length)
+                                 .max(Integer::compare)
+                                 .orElse(0);
+        int filesPerLine = outputStream.getMaxWidth() / maxWidth;
+        int index = 0;
+        for (FakeFile file : files)
+        {
+            String s = file.getName() + (file.getType() == FakeFile.Type.FOLDER ? "/" : "");
+            try
+            {
+                if (index != 0)
+                    outputStream.write(" ".repeat(maxWidth - s.length()).getBytes(StandardCharsets.UTF_8));
+                outputStream.write(s.getBytes(StandardCharsets.UTF_8));
+                if (++index == filesPerLine)
+                {
+                    index = 0;
+                    outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
+                }
+            }
+            catch (IOException e)
+            {
+                throw new CommandRuntimeException(e);
+            }
+        }
+        outputStream.write("\n".getBytes(StandardCharsets.UTF_8));
     }
 }
