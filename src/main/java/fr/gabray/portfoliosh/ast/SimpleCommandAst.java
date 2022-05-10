@@ -3,9 +3,9 @@ package fr.gabray.portfoliosh.ast;
 import fr.gabray.portfoliosh.command.Command;
 import fr.gabray.portfoliosh.command.CommandManager;
 import fr.gabray.portfoliosh.env.Environment;
+import fr.gabray.portfoliosh.util.AutoWrapOutputStream;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +13,7 @@ import java.util.Optional;
 public record SimpleCommandAst(List<String> words) implements Ast {
 
     @Override
-    public int execute(final Environment env, final OutputStream outputStream) throws IOException
+    public int execute(final Environment env, final AutoWrapOutputStream outputStream) throws IOException
     {
         if (words.isEmpty())
             throw new IllegalStateException("Should have at least one word");

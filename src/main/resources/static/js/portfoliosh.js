@@ -48,7 +48,8 @@ async function sendInput(userInput) {
         historyIndex = history.length;
     }
     stompClient.send("/sock/send", {}, JSON.stringify({
-        'input': userInput
+        'input': userInput,
+        'width': outputArea.clientWidth / 10.79
     }));
 }
 

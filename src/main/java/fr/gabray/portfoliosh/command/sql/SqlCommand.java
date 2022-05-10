@@ -6,6 +6,7 @@ import fr.gabray.portfoliosh.command.sql.statement.StatementBuilder;
 import fr.gabray.portfoliosh.env.Environment;
 import fr.gabray.portfoliosh.exception.ParsingException;
 import fr.gabray.portfoliosh.exception.SqlException;
+import fr.gabray.portfoliosh.util.AutoWrapOutputStream;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -22,7 +23,7 @@ public class SqlCommand implements Command {
     }
 
     @Override
-    public int execute(final Environment env, final OutputStream outputStream, final String... args) throws IOException
+    public int execute(final Environment env, final AutoWrapOutputStream outputStream, final String... args) throws IOException
     {
         StringJoiner joiner = new StringJoiner(" ");
         for (int i = 1; i < args.length; i++)

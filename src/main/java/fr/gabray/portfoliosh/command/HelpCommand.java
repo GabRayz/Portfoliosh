@@ -1,10 +1,10 @@
 package fr.gabray.portfoliosh.command;
 
 import fr.gabray.portfoliosh.env.Environment;
+import fr.gabray.portfoliosh.util.AutoWrapOutputStream;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 public class HelpCommand implements Command {
     @Override
@@ -14,7 +14,7 @@ public class HelpCommand implements Command {
     }
 
     @Override
-    public int execute(final Environment env, final OutputStream outputStream, final String... args) throws IOException
+    public int execute(final Environment env, final AutoWrapOutputStream outputStream, final String... args) throws IOException
     {
         InputStream stream = this.getClass().getClassLoader().getResourceAsStream("help-command.txt");
         if (stream == null)

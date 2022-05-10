@@ -8,6 +8,7 @@ import fr.gabray.portfoliosh.exception.ParsingException;
 import fr.gabray.portfoliosh.lexer.Lexer;
 import fr.gabray.portfoliosh.model.SendInputModel;
 import fr.gabray.portfoliosh.parser.Parser;
+import fr.gabray.portfoliosh.util.AutoWrapOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -17,7 +18,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.io.ByteArrayOutputStream;
 import java.util.Map;
 
 @Controller
@@ -52,25 +52,25 @@ public class PortfolioshController {
             Ast ast = parser.parse();
             if (ast == null)
             {
-                simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel(""));
+                simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel("", 0));
                 return;
             }
-            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            AutoWrapOutputStream outputStream = new AutoWrapOutputStream(model.getWidth());
             ast.execute(env, outputStream);
-            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel(outputStream.toString()));
+            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel(outputStream.toString(), 0));
         }
         catch (ParsingException e)
         {
-            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel("parsing exception: " + e.getMessage()));
+            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel("parsing exception: " + e.getMessage(), 0));
         }
         catch (CommandRuntimeException e)
         {
-            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel("portfoliosh: " + e.getMessage()));
+            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel("portfoliosh: " + e.getMessage(), 0));
         }
         catch (Exception e)
         {
             logger.error("Error while executing input", e);
-            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel("500 unexpected error"));
+            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel("500 unexpected error", 0));
         }
     }
 }
