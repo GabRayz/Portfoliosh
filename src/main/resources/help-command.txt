@@ -3,5 +3,6 @@
 `cd [path]`     : Go to directory denoted by path, or to root folder
 `cat [path]`    : Print the content of a file
 `sql {query}`   : Execute an SQL query
+`sh {path}`     : Execute a script
 `clear`         : Clears the terminal
 `help`          : Well you know...

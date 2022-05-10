@@ -18,7 +18,8 @@ public final class CommandManager {
             "cat", new CatCommand(),
             "echo", new EchoCommand(),
             "sql", new SqlCommand(),
-            "help", new HelpCommand()
+            "help", new HelpCommand(),
+            "sh", new ShCommand()
     );
 
     public static Optional<Command> get(String name)
