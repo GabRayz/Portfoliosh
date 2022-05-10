@@ -1,20 +1,30 @@
 package fr.gabray.portfoliosh.command.sql.statement;
 
+import fr.gabray.portfoliosh.command.sql.Database;
+import fr.gabray.portfoliosh.command.sql.ResultSet;
+import fr.gabray.portfoliosh.exception.SqlException;
 import lombok.Getter;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+@Getter
 public class SelectBuilder implements StatementBuilder {
-    private final List<String> columns = new ArrayList<>();
-    @Getter
-    private boolean all = false;
+    private final Selectable selectable;
+    private final List<String> columns;
+    private boolean all;
 
-    public SelectBuilder column(String name)
+    public SelectBuilder(final Selectable selectable, final List<String> columns, final boolean all)
     {
-        columns.add(name);
-        return this;
+        this.selectable = selectable;
+        this.columns = columns;
+        this.all = all;
+    }
+
+    public SelectBuilder(final Selectable selectable)
+    {
+        this.selectable = selectable;
+        this.columns = List.of();
     }
 
     public SelectBuilder all()
@@ -23,19 +33,29 @@ public class SelectBuilder implements StatementBuilder {
         return this;
     }
 
-    public FromBuilder allFrom(String tableName)
+    public SelectBuilder column(String columnName)
     {
-        this.all = true;
-        return from(tableName);
+        columns.add(columnName);
+        return this;
     }
 
-    public FromBuilder from(String tableName)
+    @Override
+    public ResultSet execute(final Database database)
     {
-        return new FromBuilder(this, tableName);
-    }
+        ResultSet resultSet = selectable.execute(database);
+        if (all)
+            return resultSet;
 
-    public List<String> getColumns()
-    {
-        return Collections.unmodifiableList(columns);
+        List<String> newColumns = new ArrayList<>();
+        for (final String column : columns)
+        {
+            if (resultSet.columns().contains(column))
+                newColumns.add(column);
+            else
+                throw new SqlException("Unknown column " + column);
+        }
+
+        resultSet.data().forEach(row -> row.keySet().removeIf(column -> !columns.contains(column)));
+        return new ResultSet(newColumns, resultSet.data());
     }
 }

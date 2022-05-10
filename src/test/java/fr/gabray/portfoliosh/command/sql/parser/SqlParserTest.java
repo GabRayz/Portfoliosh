@@ -59,12 +59,12 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT id FROM employees");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(FromBuilder.class, builder);
-        assertEquals("employees", ((FromBuilder) builder).getTableName());
-        assertEquals(1, ((FromBuilder) builder).getSelect().getColumns().size());
-        assertEquals("id", ((FromBuilder) builder).getSelect().getColumns().get(0));
+        assertInstanceOf(SelectBuilder.class, builder);
+        assertEquals("employees", ((FromBuilder) builder.getSelectable()).getTableName());
+        assertEquals(1, builder.getColumns().size());
+        assertEquals("id", builder.getColumns().get(0));
     }
 
     @Test
@@ -88,13 +88,12 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT id, firstname FROM employees");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(FromBuilder.class, builder);
-        assertEquals("employees", ((FromBuilder) builder).getTableName());
-        assertEquals(2, ((FromBuilder) builder).getSelect().getColumns().size());
-        assertEquals("id", ((FromBuilder) builder).getSelect().getColumns().get(0));
-        assertEquals("firstname", ((FromBuilder) builder).getSelect().getColumns().get(1));
+        assertEquals("employees", ((FromBuilder) builder.getSelectable()).getTableName());
+        assertEquals(2, builder.getColumns().size());
+        assertEquals("id", builder.getColumns().get(0));
+        assertEquals("firstname", builder.getColumns().get(1));
     }
 
     @Test
@@ -102,11 +101,11 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(FromBuilder.class, builder);
-        assertEquals("employees", ((FromBuilder) builder).getTableName());
-        assertTrue(((FromBuilder) builder).getSelect().isAll());
+        assertInstanceOf(FromBuilder.class, builder.getSelectable());
+        assertEquals("employees", ((FromBuilder) builder.getSelectable()).getTableName());
+        assertTrue(builder.isAll());
     }
 
     @Test
@@ -114,11 +113,11 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees ORDER BY id");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(OrderByBuilder.class, builder);
-        assertEquals(1, ((OrderByBuilder) builder).getColumns().size());
-        assertEquals("id", ((OrderByBuilder) builder).getColumns().get(0));
+        assertInstanceOf(OrderByBuilder.class, builder.getSelectable());
+        assertEquals(1, ((OrderByBuilder) builder.getSelectable()).getColumns().size());
+        assertEquals("id", ((OrderByBuilder) builder.getSelectable()).getColumns().get(0));
     }
 
     @Test
@@ -126,12 +125,12 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees ORDER BY id DESC");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(OrderByBuilder.class, builder);
-        assertEquals(1, ((OrderByBuilder) builder).getColumns().size());
-        assertEquals("id", ((OrderByBuilder) builder).getColumns().get(0));
-        assertTrue(((OrderByBuilder) builder).isDesc());
+        assertInstanceOf(OrderByBuilder.class, builder.getSelectable());
+        assertEquals(1, ((OrderByBuilder) builder.getSelectable()).getColumns().size());
+        assertEquals("id", ((OrderByBuilder) builder.getSelectable()).getColumns().get(0));
+        assertTrue(((OrderByBuilder) builder.getSelectable()).isDesc());
     }
 
     @Test
@@ -139,12 +138,12 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees ORDER BY id, firstname");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(OrderByBuilder.class, builder);
-        assertEquals(2, ((OrderByBuilder) builder).getColumns().size());
-        assertEquals("id", ((OrderByBuilder) builder).getColumns().get(0));
-        assertEquals("firstname", ((OrderByBuilder) builder).getColumns().get(1));
+        assertInstanceOf(OrderByBuilder.class, builder.getSelectable());
+        assertEquals(2, ((OrderByBuilder) builder.getSelectable()).getColumns().size());
+        assertEquals("id", ((OrderByBuilder) builder.getSelectable()).getColumns().get(0));
+        assertEquals("firstname", ((OrderByBuilder) builder.getSelectable()).getColumns().get(1));
     }
 
     @Test
@@ -152,10 +151,10 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees LIMIT 42");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(LimitBuilder.class, builder);
-        assertEquals(42, ((LimitBuilder) builder).count());
+        assertInstanceOf(LimitBuilder.class, builder.getSelectable());
+        assertEquals(42, ((LimitBuilder) builder.getSelectable()).count());
     }
 
     @Test
@@ -163,10 +162,10 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees ORDER BY id LIMIT 42");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(LimitBuilder.class, builder);
-        assertInstanceOf(OrderByBuilder.class, ((LimitBuilder) builder).parent());
+        assertInstanceOf(LimitBuilder.class, builder.getSelectable());
+        assertInstanceOf(OrderByBuilder.class, ((LimitBuilder) builder.getSelectable()).parent());
     }
 
     @Test
@@ -174,10 +173,10 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees WHERE id = 1");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(WhereBuilder.class, builder);
-        WhereBuilder builder1 = (WhereBuilder) builder;
+        assertInstanceOf(WhereBuilder.class, builder.getSelectable());
+        WhereBuilder builder1 = (WhereBuilder) builder.getSelectable();
         assertInstanceOf(WhereLeafCondition.class, builder1.getCondition());
         assertEquals("id", ((WhereLeafCondition) builder1.getCondition()).left());
         assertEquals("1", ((WhereLeafCondition) builder1.getCondition()).right());
@@ -188,10 +187,10 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees WHERE id is null");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(WhereBuilder.class, builder);
-        WhereBuilder builder1 = (WhereBuilder) builder;
+        assertInstanceOf(WhereBuilder.class, builder.getSelectable());
+        WhereBuilder builder1 = (WhereBuilder) builder.getSelectable();
         assertInstanceOf(WhereLeafCondition.class, builder1.getCondition());
         assertEquals("id", ((WhereLeafCondition) builder1.getCondition()).left());
         assertEquals(SqlOperator.IS_NULL, ((WhereLeafCondition) builder1.getCondition()).operator());
@@ -203,10 +202,10 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees WHERE id is not null");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(WhereBuilder.class, builder);
-        WhereBuilder builder1 = (WhereBuilder) builder;
+        assertInstanceOf(WhereBuilder.class, builder.getSelectable());
+        WhereBuilder builder1 = (WhereBuilder) builder.getSelectable();
         assertInstanceOf(WhereLeafCondition.class, builder1.getCondition());
         assertEquals("id", ((WhereLeafCondition) builder1.getCondition()).left());
         assertEquals(SqlOperator.IS_NOT_NULL, ((WhereLeafCondition) builder1.getCondition()).operator());
@@ -218,10 +217,10 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees WHERE id = 1 AND firstname != John");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(WhereBuilder.class, builder);
-        WhereBuilder builder1 = (WhereBuilder) builder;
+        assertInstanceOf(WhereBuilder.class, builder.getSelectable());
+        WhereBuilder builder1 = (WhereBuilder) builder.getSelectable();
         assertInstanceOf(WhereNodeCondition.class, builder1.getCondition());
         assertEquals(SqlReservedWord.AND, ((WhereNodeCondition) builder1.getCondition()).operator());
     }
@@ -231,10 +230,10 @@ class SqlParserTest {
     {
         SqlParser parser = new SqlParser("SELECT * FROM employees JOIN companies ON employees.company_id = companies.id");
 
-        StatementBuilder builder = parser.parse(database);
+        SelectBuilder builder = parser.parse(database);
 
-        assertInstanceOf(JoinBuilder.class, builder);
-        JoinBuilder builder1 = (JoinBuilder) builder;
+        assertInstanceOf(JoinBuilder.class, builder.getSelectable());
+        JoinBuilder builder1 = (JoinBuilder) builder.getSelectable();
         assertEquals("companies", builder1.getTableName());
         assertEquals("employees.company_id", builder1.getLeft());
         assertEquals("companies.id", builder1.getRight());

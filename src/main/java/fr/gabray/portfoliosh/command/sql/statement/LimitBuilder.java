@@ -3,7 +3,7 @@ package fr.gabray.portfoliosh.command.sql.statement;
 import fr.gabray.portfoliosh.command.sql.Database;
 import fr.gabray.portfoliosh.command.sql.ResultSet;
 
-public record LimitBuilder(StatementBuilder parent, long count) implements StatementBuilder {
+public record LimitBuilder(StatementBuilder parent, long count) implements Selectable {
 
     @Override
     public ResultSet execute(final Database database)

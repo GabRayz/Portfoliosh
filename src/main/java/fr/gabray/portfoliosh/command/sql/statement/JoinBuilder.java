@@ -32,7 +32,7 @@ public class JoinBuilder implements Whereable {
     {
         ResultSet leftTable = fromBuilder.execute(database);
 
-        ResultSet rightTable = new SelectBuilder().allFrom(tableName).execute(database);
+        ResultSet rightTable = new FromBuilder(tableName).execute(database);
 
         List<String> columns = new ArrayList<>(leftTable.columns());
         columns.addAll(computeFullName(rightTable, tableName));

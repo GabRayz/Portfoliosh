@@ -17,13 +17,14 @@ public class SqlParser {
         this.lexer = new SqlLexer(input);
     }
 
-    public StatementBuilder parse(Database database) throws SqlException, ParsingException
+    public SelectBuilder parse(Database database) throws SqlException, ParsingException
     {
         SqlToken token = lexer.pop();
         if (token.getType() != SqlTokenType.RESERVED_WORD || ((SqlReservedWordToken) token).getReservedWord() != SqlReservedWord.SELECT)
             throw new ParsingException("Expected SELECT");
 
-        SelectBuilder select = new SelectBuilder();
+        List<String> selectedColumns = new ArrayList<>();
+        boolean selectAll = false;
 
         token = lexer.pop();
         if (token.getType() != SqlTokenType.WORD)
@@ -31,9 +32,9 @@ public class SqlParser {
         while (token.getType() == SqlTokenType.WORD)
         {
             if (token.getValue().equals("*"))
-                select.all();
+                selectAll = true;
             else
-                select.column(token.getValue());
+                selectedColumns.add(token.getValue());
 
             token = lexer.pop();
             if (token.getType() != SqlTokenType.COMMA)
@@ -48,11 +49,12 @@ public class SqlParser {
         if (token.getType() != SqlTokenType.WORD)
             throw new ParsingException("Expected table name");
 
-        FromBuilder fromBuilder = select.from(token.getValue());
+        FromBuilder fromBuilder = new FromBuilder(token.getValue());
         Whereable whereable = parseJoin(fromBuilder);
         Orderable orderable = parseWhere(whereable);
         Limitable limitable = parseOrderBy(orderable);
-        return parseLimit(limitable);
+        Selectable selectable = parseLimit(limitable);
+        return new SelectBuilder(selectable, selectedColumns, selectAll);
     }
 
     private Whereable parseJoin(Joinable joinable) throws ParsingException
@@ -163,7 +165,7 @@ public class SqlParser {
         return orderBy;
     }
 
-    private StatementBuilder parseLimit(Limitable limitable) throws ParsingException
+    private Selectable parseLimit(Limitable limitable) throws ParsingException
     {
         SqlToken token = lexer.peek();
         if (token.getType() != SqlTokenType.RESERVED_WORD || ((SqlReservedWordToken) token).getReservedWord() != SqlReservedWord.LIMIT)

@@ -51,19 +51,12 @@ class StatementBuilderTest {
     }
 
     @Test
-    void simpleSelectWithoutFromShouldThrowTest()
-    {
-        SelectBuilder statement = new SelectBuilder().column("id").column("firstname");
-
-        assertThrows(UnsupportedOperationException.class, () -> statement.execute(database));
-    }
-
-    @Test
     void simpleSelectFromTest()
     {
-        StatementBuilder statement = new SelectBuilder()
-                .column("id").column("firstname")
-                .from("employees");
+        StatementBuilder statement = new FromBuilder("employees")
+                .select()
+                .column("id")
+                .column("firstname");
 
         ResultSet result = statement.execute(database);
 
@@ -74,8 +67,7 @@ class StatementBuilderTest {
     @Test
     void selectAllTest()
     {
-        StatementBuilder statement = new SelectBuilder()
-                .allFrom("employees");
+        StatementBuilder statement = new FromBuilder("employees").selectAll();
 
         ResultSet result = statement.execute(database);
 
@@ -90,9 +82,9 @@ class StatementBuilderTest {
     @Test
     void selectInvalidFrom()
     {
-        StatementBuilder statement = new SelectBuilder()
-                .column("id").column("firstname")
-                .from("invalid");
+        StatementBuilder statement = new FromBuilder("invalid")
+                .select()
+                .column("id").column("firstname");
 
         assertThrows(SqlException.class, () -> statement.execute(database));
     }
@@ -100,9 +92,9 @@ class StatementBuilderTest {
     @Test
     void selectInvalidColumnsFrom()
     {
-        StatementBuilder statement = new SelectBuilder()
-                .column("id").column("invalid")
-                .from("employees");
+        StatementBuilder statement = new FromBuilder("employees")
+                .select()
+                .column("id").column("invalid");
 
         assertThrows(SqlException.class, () -> statement.execute(database));
     }
@@ -110,10 +102,11 @@ class StatementBuilderTest {
     @Test
     void orderByIdTest()
     {
-        StatementBuilder statement = new SelectBuilder()
-                .column("id").column("firstname")
-                .from("employees")
-                .orderBy("id");
+        StatementBuilder statement = new FromBuilder("employees")
+                .orderBy("id")
+                .select()
+                .column("id")
+                .column("firstname");
 
         ResultSet result = statement.execute(database);
 
@@ -128,10 +121,10 @@ class StatementBuilderTest {
     @Test
     void orderByAgeTest()
     {
-        StatementBuilder statement = new SelectBuilder()
-                .column("age").column("firstname")
-                .from("employees")
-                .orderBy("age");
+        StatementBuilder statement = new FromBuilder("employees")
+                .orderBy("age")
+                .select()
+                .column("age").column("firstname");
 
         ResultSet result = statement.execute(database);
 
@@ -146,11 +139,11 @@ class StatementBuilderTest {
     @Test
     void orderByAgeDescTest()
     {
-        StatementBuilder statement = new SelectBuilder()
-                .column("age").column("firstname")
-                .from("employees")
+        StatementBuilder statement = new FromBuilder("employees")
                 .orderBy("age")
-                .desc();
+                .desc()
+                .select()
+                .column("age").column("firstname");
 
         ResultSet result = statement.execute(database);
 
@@ -165,10 +158,10 @@ class StatementBuilderTest {
     @Test
     void orderByInvalidColumnTest()
     {
-        StatementBuilder statement = new SelectBuilder()
-                .column("id").column("firstname")
-                .from("employees")
-                .orderBy("age");
+        StatementBuilder statement = new FromBuilder("employees")
+                .orderBy("blbl")
+                .select()
+                .column("id").column("firstname");
 
         assertThrows(SqlException.class, () -> statement.execute(database));
     }
@@ -176,9 +169,9 @@ class StatementBuilderTest {
     @Test
     void limitTest()
     {
-        StatementBuilder statement = new SelectBuilder()
-                .allFrom("employees")
-                .limit(2);
+        StatementBuilder statement = new FromBuilder("employees")
+                .limit(2)
+                .selectAll();
 
         ResultSet result = statement.execute(database);
 
