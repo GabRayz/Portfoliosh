@@ -11,6 +11,7 @@ import fr.gabray.portfoliosh.parser.Parser;
 import fr.gabray.portfoliosh.util.AutoWrapOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
@@ -23,7 +24,7 @@ import java.util.Map;
 @Controller
 public class PortfolioshController {
     private static final Logger logger = LoggerFactory.getLogger(PortfolioshController.class);
-    public static final String SOCK_RECEIVE = "/sock/receive";
+    public static final String SOCK_RECEIVE = "/sock/receive/";
 
     private final SimpMessagingTemplate simpMessagingTemplate;
 
@@ -38,10 +39,11 @@ public class PortfolioshController {
         return "portfoliosh";
     }
 
-    @MessageMapping("/send")
-    public void send(@Payload final SendInputModel model, SimpMessageHeaderAccessor headerAccessor)
+    @MessageMapping("/send/{clientId}")
+    public void send(@DestinationVariable("clientId") int clientId, @Payload final SendInputModel model, SimpMessageHeaderAccessor headerAccessor)
     {
         logger.debug(model.getInput());
+        String socket = SOCK_RECEIVE + clientId;
         try
         {
             Map<String, Object> sessionAttributes = headerAccessor.getSessionAttributes();
@@ -52,25 +54,25 @@ public class PortfolioshController {
             Ast ast = parser.parse();
             if (ast == null)
             {
-                simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel("", 0));
+                simpMessagingTemplate.convertAndSend(socket, new SendInputModel("", 0));
                 return;
             }
             AutoWrapOutputStream outputStream = new AutoWrapOutputStream(model.getWidth());
             ast.execute(env, outputStream);
-            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel(outputStream.toString(), 0));
+            simpMessagingTemplate.convertAndSend(socket, new SendInputModel(outputStream.toString(), 0));
         }
         catch (ParsingException e)
         {
-            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel("parsing exception: " + e.getMessage(), 0));
+            simpMessagingTemplate.convertAndSend(socket, new SendInputModel("parsing exception: " + e.getMessage(), 0));
         }
         catch (CommandRuntimeException e)
         {
-            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel("portfoliosh: " + e.getMessage(), 0));
+            simpMessagingTemplate.convertAndSend(socket, new SendInputModel("portfoliosh: " + e.getMessage(), 0));
         }
         catch (Exception e)
         {
             logger.error("Error while executing input", e);
-            simpMessagingTemplate.convertAndSend(SOCK_RECEIVE, new SendInputModel("500 unexpected error", 0));
+            simpMessagingTemplate.convertAndSend(socket, new SendInputModel("500 unexpected error", 0));
         }
     }
 }

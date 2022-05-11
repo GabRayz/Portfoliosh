@@ -2,14 +2,16 @@ const input = document.getElementById('sh-input');
 const outputArea = document.getElementById('output');
 
 let stompClient = null;
+let random;
 
 function connect() {
     return new Promise((resolve, reject) => {
+        random = Math.floor(Math.random() * (99999 - 10000) + 10000);
         const socket = new SockJS('/websocket');
         stompClient = Stomp.over(socket);
         stompClient.connect({}, function (frame) {
             console.log('Connected!');
-            stompClient.subscribe('/sock/receive', function (message) {
+            stompClient.subscribe(`/sock/receive/${random}`, function (message) {
                 let response = JSON.parse(message.body).input;
                 console.log(response);
                 if (response.length > 0) {
@@ -47,9 +49,9 @@ async function sendInput(userInput) {
         history.push(userInput);
         historyIndex = history.length;
     }
-    stompClient.send("/sock/send", {}, JSON.stringify({
+    stompClient.send(`/sock/send/${random}`, {}, JSON.stringify({
         'input': userInput,
-        'width': outputArea.clientWidth / 10.79
+        'width': Math.floor(outputArea.clientWidth / 10.79)
     }));
 }
 
