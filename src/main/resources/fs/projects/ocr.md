@@ -1,12 +1,11 @@
 # OCR
 
-🗓 Date: 2019 🕙 Duration: 1 month
+🗓 Date: 2019
+🕙 Duration: 1 month
 
-Optical Character recognition program, analyzing an image to extract text. The recognition is done with a 4 layers neural network implemented from
-scratch.
+Optical Character recognition program, analyzing an image to extract text. The recognition is done with a 4 layers neural network implemented from scratch.
 
 ## 🚀 Features :
-
 - Image preprocessing
 - Text block segmentation
 - Character segmentation
@@ -15,7 +14,6 @@ scratch.
 - Grammar check
 
 ## 🧬 Technologies :
-
 - C
 - GTK
 

@@ -1,11 +1,11 @@
 # Uprising
 
-🗓 Date: 2021 🕙 Duration: 1 month
+🗓 Date: 2021
+🕙 Duration: 1 month
 
 PING is an IDE for Java that supports git and maven projects.
 
 ## 🚀 Features :
-
 - Project view
 - Maven & git
 - Code editing
@@ -15,6 +15,5 @@ PING is an IDE for Java that supports git and maven projects.
 - Themes
 
 ## 🧬 Technologies :
-
 - Java
 - Jetpack Compose
