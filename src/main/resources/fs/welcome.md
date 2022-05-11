@@ -1,4 +1,5 @@
+
 # Welcome to my portfolio!
 
-Use this shell environment to explore and find out about me. Use the `help` command to get some tips!
-Use `ls` to see where to start.
+Hi, I'm Gabriel and this is my portfolio. Use this shell environment to explore and find out about me. Use the `help` command to get some tips!
+Type `ls` to see where to start.
