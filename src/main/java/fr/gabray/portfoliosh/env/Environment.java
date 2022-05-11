@@ -68,9 +68,10 @@ public class Environment {
         levels.addColumn(new Column("id"), true);
         levels.addColumn(new Column("value"), false);
         levels.insertObj(Map.of("value", "pro"));
+        levels.insertObj(Map.of("value", "advanced"));
         levels.insertObj(Map.of("value", "good"));
         levels.insertObj(Map.of("value", "basics"));
-        levels.insertObj(Map.of("value", "low"));
+        levels.insertObj(Map.of("value", "nah"));
         environment.database.addTable(levels);
 
         Table skills = new Table("skills");
@@ -79,10 +80,21 @@ public class Environment {
         skills.addColumn(new Column("name"), false);
         skills.addColumn(new Column("level"), false);
         skills.insertObj(Map.of("name", "Java", "level", "1"));
-        skills.insertObj(Map.of("name", "C++", "level", "2"));
+        skills.insertObj(Map.of("name", "C++", "level", "3"));
         skills.insertObj(Map.of("name", "C", "level", "2"));
+        skills.insertObj(Map.of("name", "C#", "level", "3"));
         skills.insertObj(Map.of("name", "Javascript", "level", "2"));
-        skills.insertObj(Map.of("name", "Python", "level", "3"));
+        skills.insertObj(Map.of("name", "Python", "level", "4"));
+        skills.insertObj(Map.of("name", "SQL", "level", "2"));
+
+        skills.insertObj(Map.of("name", "Spring Boot", "level", "3"));
+        skills.insertObj(Map.of("name", "Hibernate", "level", "3"));
+        skills.insertObj(Map.of("name", "Docker", "level", "3"));
+        skills.insertObj(Map.of("name", "Linux", "level", "3"));
+
+        skills.insertObj(Map.of("name", "Algorithm", "level", "2"));
+        skills.insertObj(Map.of("name", "Code structure", "level", "2"));
+        skills.insertObj(Map.of("name", "TDD", "level", "3"));
 
         return environment;
     }
@@ -101,5 +113,7 @@ public class Environment {
 
         FakeFile skills = environment.createFile(FakeFile.Type.FOLDER, environment.getRootFolder(), "skills");
         environment.createFile(FakeFile.Type.FILE, skills, "skills.sh");
+
+        environment.createFile(FakeFile.Type.FILE, environment.getRootFolder(), "experiences.md");
     }
 }

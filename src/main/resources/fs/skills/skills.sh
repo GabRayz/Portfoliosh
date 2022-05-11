@@ -1,1 +1,1 @@
-sql SELECT * from skills;
+sql SELECT id, name, levels.value FROM skills JOIN levels ON level = levels.id ORDER BY level
