@@ -5,7 +5,7 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, ci ]
 
 jobs:
   build:
@@ -37,3 +37,18 @@ jobs:
           context: .
           push: true
           tags: gabray/portfoliosh:latest
+
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install SSH Key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          known_hosts: unnecessary
+      - name: Adding Known Hosts
+        run: ssh-keyscan -H ${{ SSH_HOST }}  >> ~/.ssh/known_hosts
+      - name: Deploy
+        run: ssh ${{SSH_USER}}@gabray.fr 'docker stop portfoliosh ; ( docker pull gabray/portfoliosh && docker run --rm -d -p 8086:8086 --name portfoliosh gabray/portfoliosh )'
+
