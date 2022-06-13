@@ -1,5 +1,5 @@
 html, body {
-    font-family: 'Monaco', Arial, serif;
+    font-family: 'Roboto Mono', 'Monaco', Arial, serif;
     font-size: 18px;
     color: greenyellow;
     background-color: black;
@@ -14,7 +14,7 @@ html, body {
     width: 100%;
     border: none;
     font-size: 18px;
-    font-family: 'Monaco', Arial, serif;
+    font-family: 'Roboto Mono', 'Monaco', Arial, serif;
     background-color: black;
     color: greenyellow;
 }
@@ -23,7 +23,7 @@ html, body {
     width: 100%;
     border: none;
     font-size: 18px;
-    font-family: 'Monaco', Arial, serif;
+    font-family: 'Roboto Mono', 'Monaco', Arial, serif;
     padding: 0;
     background-color: black;
     color: greenyellow;
